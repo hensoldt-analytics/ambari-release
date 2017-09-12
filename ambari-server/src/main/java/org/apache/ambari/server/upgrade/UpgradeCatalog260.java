@@ -405,7 +405,7 @@ public class UpgradeCatalog260 extends AbstractUpgradeCatalog {
    */
   @Override
   protected void executePreDMLUpdates() throws AmbariException, SQLException {
-
+    removeSupersetFromDruid();
   }
 
   /**
@@ -415,7 +415,6 @@ public class UpgradeCatalog260 extends AbstractUpgradeCatalog {
   protected void executeDMLUpdates() throws AmbariException, SQLException {
     addNewConfigurationsFromXml();
     setUnmappedForOrphanedConfigs();
-    removeSupersetFromDruid();
     ensureZeppelinProxyUserConfigs();
     updateKerberosDescriptorArtifacts();
     updateAmsConfigs();
