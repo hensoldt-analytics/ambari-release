@@ -33,7 +33,6 @@
     <check>org.apache.ambari.server.checks.ServicesYarnWorkPreservingCheck</check>
     <check>org.apache.ambari.server.checks.YarnRMHighAvailabilityCheck</check>
     <check>org.apache.ambari.server.checks.YarnTimelineServerStatePreservingCheck</check>
-    <check>org.apache.ambari.server.checks.DruidHighAvailabilityCheck</check>
 
     <configuration>
       <!-- Configuration properties for all pre-reqs including required pre-reqs -->
