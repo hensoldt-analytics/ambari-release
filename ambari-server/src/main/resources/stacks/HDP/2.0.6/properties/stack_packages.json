@@ -1174,6 +1174,11 @@
           "current_dir": "{0}/current/zookeeper-client/conf"
         }
       ]
-    }
+    },
+    "upgrade-dependencies" : {
+      "YARN": ["TEZ"],
+      "TEZ": ["YARN"],
+      "MAHOUT": ["MAPREDUCE2"]
+    }    
   }
 }
