@@ -101,7 +101,9 @@ import org.apache.ambari.server.state.ServiceInfo;
 import org.apache.ambari.server.state.StackId;
 import org.apache.ambari.server.state.StackInfo;
 import org.apache.ambari.server.state.State;
+import org.apache.ambari.server.state.UpgradeContext;
 import org.apache.ambari.server.state.stack.OsFamily;
+import org.apache.ambari.server.state.stack.upgrade.UpgradeType;
 import org.apache.ambari.server.state.svccomphost.ServiceComponentHostOpInProgressEvent;
 import org.apache.ambari.server.utils.StageUtils;
 import org.apache.commons.lang.StringUtils;
@@ -178,6 +180,7 @@ public class AmbariCustomCommandExecutionHelper {
 
   @Inject
   private HostRoleCommandDAO hostRoleCommandDAO;
+
 
   private Map<String, Map<String, Map<String, String>>> configCredentialsForService = new HashMap<>();
 
@@ -512,7 +515,15 @@ public class AmbariCustomCommandExecutionHelper {
       execCmd.setCommandParams(commandParams);
       execCmd.setRoleParams(roleParams);
 
-      execCmd.setRepositoryFile(getCommandRepository(cluster, component, host));
+      UpgradeContext upgradeContext = actionExecutionContext.getUpgradeContext();
+      RepositoryVersionEntity repositoryVersionEntity = null;
+
+      // ToDo: move CommandRepository population to run-time
+      if (component != null && upgradeContext != null && upgradeContext.getType() == UpgradeType.NON_ROLLING) {
+        repositoryVersionEntity = upgradeContext.getTargetRepositoryVersion(component.getServiceName());
+      }
+
+      execCmd.setRepositoryFile(getCommandRepository(cluster, component, host, repositoryVersionEntity));
 
       // perform any server side command related logic - eg - set desired states on restart
       applyCustomCommandBackendLogic(cluster, serviceName, componentName, commandName, hostName);
@@ -1260,7 +1271,7 @@ public class AmbariCustomCommandExecutionHelper {
       }
     };
 
-    return updateBaseUrls(cluster, component, updater).toString();
+    return updateBaseUrls(cluster, component, updater, null).toString();
   }
 
   /**
@@ -1273,11 +1284,20 @@ public class AmbariCustomCommandExecutionHelper {
    * @throws AmbariException
    */
   @Experimental(feature=ExperimentalFeature.PATCH_UPGRADES)
-  public CommandRepository getCommandRepository(final Cluster cluster, ServiceComponent component, final Host host) throws AmbariException {
+  public CommandRepository getCommandRepository(final Cluster cluster, ServiceComponent component, final Host host,
+                                                final RepositoryVersionEntity repositoryVersionEntity) throws AmbariException {
 
     final CommandRepository commandRepo = new CommandRepository();
     boolean sysPreppedHost = configs.areHostsSysPrepped().equalsIgnoreCase("true");
-    StackId stackId = component.getDesiredStackId();
+    final StackId stackId;
+
+    // ToDo: Update CommandRepository at runtime, move update to ExecutionCommandWrapper
+    if (repositoryVersionEntity != null) {
+      stackId = repositoryVersionEntity.getStackId();
+    } else {
+      stackId = component.getDesiredStackId();
+    }
+
     commandRepo.setRepositories(Collections.<RepositoryInfo>emptyList());
     commandRepo.setStackName(stackId.getStackName());
     commandRepo.getFeature().setPreInstalled(configs.areHostsSysPrepped());
@@ -1335,7 +1355,7 @@ public class AmbariCustomCommandExecutionHelper {
       }
     };
 
-    updateBaseUrls(cluster, component, updater);
+    updateBaseUrls(cluster, component, updater, repositoryVersionEntity);
 
     if (configs.arePackagesLegacyOverridden()) {
       LOG.warn("Legacy override option is turned on, disabling CommandRepositoryFeature.scoped feature");
@@ -1397,15 +1417,17 @@ public class AmbariCustomCommandExecutionHelper {
    * Checks repo URLs against the current version for the cluster and makes
    * adjustments to the Base URL when the current is different.
    *
-   * @param <T> the result after appling the repository version, if found.
+   * @param <T> the result after applying the repository version, if found.
    */
   @Experimental(feature = ExperimentalFeature.PATCH_UPGRADES)
-  private <T> T updateBaseUrls(Cluster cluster, ServiceComponent component, BaseUrlUpdater<T> function) throws AmbariException {
+  private <T> T updateBaseUrls(Cluster cluster, ServiceComponent component, BaseUrlUpdater<T> function, RepositoryVersionEntity repositoryVersionEntity) throws AmbariException {
 
     RepositoryVersionEntity repositoryEntity = null;
 
     // !!! try to find the component repo first
-    if (null != component) {
+    if (repositoryVersionEntity != null) {
+      repositoryEntity = repositoryVersionEntity;
+    } else if (null != component) {
       repositoryEntity = component.getDesiredRepositoryVersion();
     } else {
       LOG.info("Service component not passed in, attempt to resolve the repository for cluster {}",

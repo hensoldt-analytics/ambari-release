@@ -597,7 +597,7 @@ public class UpgradeContext {
    * participating. This is the version that the service will be on if the
    * upgrade or downgrade succeeds.
    * <p/>
-   * With a {@link Direction#UPGRADE}, all services should be targetting the
+   * With a {@link Direction#UPGRADE}, all services should be targeting the
    * same repository version. However, {@link Direction#DOWNGRADE} will target
    * the original repository that the service was on.
    *

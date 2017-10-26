@@ -579,7 +579,7 @@ public class AmbariCustomCommandExecutionHelperTest {
     ServiceComponentDesiredStateDAO componentDAO = injector.getInstance(ServiceComponentDesiredStateDAO.class);
     RepositoryVersionHelper repoVersionHelper = injector.getInstance(RepositoryVersionHelper.class);
 
-    CommandRepository commandRepo = helper.getCommandRepository(cluster, componentRM, host);
+    CommandRepository commandRepo = helper.getCommandRepository(cluster, componentRM, host, null);
 
     Assert.assertEquals(0, commandRepo.getRepositories().size());
 
@@ -610,14 +610,14 @@ public class AmbariCustomCommandExecutionHelperTest {
     componentEntity = componentDAO.merge(componentEntity);
 
     // !!! make sure the override is set
-    commandRepo = helper.getCommandRepository(cluster, componentRM, host);
+    commandRepo = helper.getCommandRepository(cluster, componentRM, host, null);
 
     Assert.assertEquals(1, commandRepo.getRepositories().size());
     CommandRepository.Repository repo = commandRepo.getRepositories().iterator().next();
     Assert.assertEquals("http://foo", repo.getBaseUrl());
 
     // verify that ZK has no repositories, since we haven't defined a repo version for ZKC
-    commandRepo = helper.getCommandRepository(cluster, componentZKC, host);
+    commandRepo = helper.getCommandRepository(cluster, componentZKC, host, null);
     Assert.assertEquals(0, commandRepo.getRepositories().size());
   }
 

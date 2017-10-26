@@ -1176,6 +1176,8 @@ public class UpgradeResourceProvider extends AbstractControllerResourceProvider 
       requestParams.put(KeyNames.COMMAND_RETRY_ENABLED, Boolean.TRUE.toString().toLowerCase());
     }
 
+    actionContext.setUpgradeContext(context);
+
     s_commandExecutionHelper.get().addExecutionCommandsToStage(actionContext, stage, requestParams, jsons);
 
     request.addStages(Collections.singletonList(stage));

@@ -28,6 +28,7 @@ import org.apache.ambari.server.agent.ExecutionCommand;
 import org.apache.ambari.server.controller.internal.RequestOperationLevel;
 import org.apache.ambari.server.controller.internal.RequestResourceFilter;
 import org.apache.ambari.server.orm.entities.RepositoryVersionEntity;
+import org.apache.ambari.server.state.UpgradeContext;
 
 /**
  * The context required to create tasks and stages for a custom action
@@ -47,6 +48,8 @@ public class ActionExecutionContext {
 
   private List<ExecutionCommandVisitor> m_visitors = new ArrayList<>();
   private RepositoryVersionEntity repositoryVersion;
+
+  private UpgradeContext upgradeContext = null;
 
   /**
    * {@code true} if slave/client component failures should be automatically
@@ -132,6 +135,14 @@ public class ActionExecutionContext {
 
   public String getExpectedComponentName() {
     return expectedComponentName;
+  }
+
+  public void setUpgradeContext(UpgradeContext upgradeContext) {
+    this.upgradeContext = upgradeContext;
+  }
+
+  public UpgradeContext getUpgradeContext() {
+    return upgradeContext;
   }
 
   /**
