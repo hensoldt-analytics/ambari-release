@@ -42,7 +42,7 @@
   <upgrade-path>
     <intermediate-stack version="2.5"/>
   </upgrade-path>
-  
+
   <order>
     <group xsi:type="cluster" name="PRE_CLUSTER" title="Prepare Upgrade">
       <direction>UPGRADE</direction>
@@ -94,7 +94,7 @@
         <component>ACCUMULO_MONITOR</component>
         <component>ACCUMULO_MASTER</component>
       </service>
-      
+
       <service name="STORM">
         <component>DRPC_SERVER</component>
         <component>STORM_UI_SERVER</component>
@@ -326,7 +326,7 @@
           <summary>Modifying ATS Scan default</summary>
         </task>
       </execute-stage>
-      
+
       <execute-stage service="YARN" component="RESOURCEMANAGER" title="Validate Root Queue Ordering Policy">
         <task xsi:type="server_action" class="org.apache.ambari.server.serveraction.upgrades.FixCapacitySchedulerOrderingPolicy">
           <summary>Validate Root Queue Ordering Policy</summary>
@@ -338,7 +338,7 @@
           <summary>Adding queue customization property</summary>
         </task>
       </execute-stage>
-      
+
       <!--TEZ-->
       <execute-stage service="TEZ" component="TEZ_CLIENT" title="Verify LZO codec path for Tez">
         <task xsi:type="server_action" class="org.apache.ambari.server.serveraction.upgrades.FixLzoCodecPath">
@@ -853,7 +853,7 @@
         <service>HBASE</service>
       </priority>
     </group>
-    
+
     <group xsi:type="restart" name="HIVE_MASTERS" title="Hive Masters">
       <service-check>false</service-check>
       <skippable>true</skippable>
@@ -928,7 +928,7 @@
         <service>SPARK</service>
       </priority>
     </group>
-    
+
     <group xsi:type="restart" name="FALCON" title="Falcon">
       <service-check>false</service-check>
       <skippable>true</skippable>
@@ -986,7 +986,7 @@
         <component>FLUME_HANDLER</component>
       </service>
     </group>
-    
+
     <group xsi:type="restart" name="ACCUMULO" title="Accumulo">
       <service-check>false</service-check>
       <skippable>true</skippable>
@@ -1016,7 +1016,7 @@
 
     <group xsi:type="cluster" name="FINALIZE_PRE_CHECK" title="Finalize {{direction.text.proper}} Pre-Check">
       <direction>UPGRADE</direction>
-      
+
       <execute-stage title="Check Component Versions">
         <task xsi:type="server_action" class="org.apache.ambari.server.serveraction.upgrades.ComponentVersionCheckAction" />
       </execute-stage>
@@ -1096,7 +1096,7 @@
             <function>setup_ranger_java_patches</function>
           </task>
         </pre-upgrade>
-        
+
         <pre-downgrade copy-upgrade="true" />
 
         <upgrade>
@@ -1115,7 +1115,7 @@
     <service name="HDFS">
       <component name="NAMENODE">
         <upgrade>
-          <task xsi:type="restart-task"/>
+          <task xsi:type="restart-task" timeout-config="upgrade.parameter.nn-restart.timeout"/>
         </upgrade>
       </component>
 
@@ -1453,7 +1453,7 @@
             <function>delete_storm_local_data</function>
           </task>
         </pre-upgrade>
-        
+
         <pre-downgrade copy-upgrade="true" />
 
         <upgrade>
@@ -1469,7 +1469,7 @@
             <function>delete_storm_local_data</function>
           </task>
         </pre-upgrade>
-        
+
         <pre-downgrade copy-upgrade="true" />
 
         <upgrade>
@@ -1481,7 +1481,7 @@
             <message>Please rebuild your topology using the new Storm version dependencies and resubmit it using the newly created jar.</message>
           </task>
         </post-upgrade>
-        
+
         <post-downgrade copy-upgrade="true" />
       </component>
     </service>
