@@ -1684,7 +1684,8 @@ var urls = {
     'tasks/Tasks/role,' +
     'tasks/Tasks/request_id,' +
     'tasks/Tasks/stage_id,' +
-    'tasks/Tasks/status&' +
+    'tasks/Tasks/status,' +
+    'tasks/Tasks/structured_out&' +
     'minimal_response=true',
     'mock': '/data/stack_versions/upgrade_item.json'
   },
