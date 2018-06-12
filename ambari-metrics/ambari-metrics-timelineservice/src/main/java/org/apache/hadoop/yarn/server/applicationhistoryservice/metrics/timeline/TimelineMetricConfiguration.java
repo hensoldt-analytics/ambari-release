@@ -257,6 +257,9 @@ public class TimelineMetricConfiguration {
   public static final String TIMELINE_METRICS_WHITELIST_FILE =
     "timeline.metrics.whitelist.file";
 
+  public static final String TIMELINE_METRICS_BLACKLIST_FILE =
+    "timeline.metrics.blacklist.file";
+
   public static final String TIMELINE_METRICS_APPS_BLACKLIST =
     "timeline.metrics.apps.blacklist";
 
