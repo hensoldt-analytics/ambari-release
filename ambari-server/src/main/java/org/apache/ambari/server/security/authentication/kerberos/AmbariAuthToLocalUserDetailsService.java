@@ -20,6 +20,7 @@ package org.apache.ambari.server.security.authentication.kerberos;
 
 import org.apache.ambari.server.AmbariException;
 import org.apache.ambari.server.configuration.Configuration;
+import org.apache.ambari.server.security.authentication.AmbariUserDetails;
 import org.apache.ambari.server.security.authorization.AmbariGrantedAuthority;
 import org.apache.ambari.server.security.authorization.UserType;
 import org.apache.ambari.server.security.authorization.Users;
@@ -135,7 +136,7 @@ public class AmbariAuthToLocalUserDetailsService implements UserDetailsService {
 
       if (user != null) {
         Collection<AmbariGrantedAuthority> userAuthorities = users.getUserAuthorities(user.getUserName(), user.getUserType());
-        return new User(username, "", userAuthorities);
+        return new AmbariUserDetails(user, userAuthorities);
       }
     }
 

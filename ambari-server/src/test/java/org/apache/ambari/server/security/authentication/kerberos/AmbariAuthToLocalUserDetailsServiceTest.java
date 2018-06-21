@@ -53,7 +53,7 @@ public class AmbariAuthToLocalUserDetailsServiceTest extends EasyMockSupport {
     expect(configuration.getKerberosAuthenticationProperties()).andReturn(properties).once();
 
     User user = createMock(User.class);
-    expect(user.getUserName()).andReturn("user1").once();
+    expect(user.getUserName()).andReturn("user1").times(2);
     expect(user.getUserType()).andReturn(UserType.LDAP).once();
 
     Collection<AmbariGrantedAuthority> userAuthorities = Collections.singletonList(createNiceMock(AmbariGrantedAuthority.class));
@@ -68,12 +68,12 @@ public class AmbariAuthToLocalUserDetailsServiceTest extends EasyMockSupport {
 
     UserDetails userDetails = userdetailsService.loadUserByUsername("user1@EXAMPLE.COM");
 
-    verifyAll();
-
     Assert.assertNotNull(userDetails);
     Assert.assertEquals("user1", userDetails.getUsername());
     Assert.assertEquals(userAuthorities.size(), userDetails.getAuthorities().size());
     Assert.assertEquals("", userDetails.getPassword());
+
+    verifyAll();
   }
 
   @Test(expected = UsernameNotFoundException.class)
