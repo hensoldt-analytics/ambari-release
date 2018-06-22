@@ -27,7 +27,6 @@ import org.apache.ambari.server.orm.entities.PermissionEntity;
 import org.apache.ambari.server.orm.entities.PrivilegeEntity;
 import org.apache.ambari.server.orm.entities.ResourceEntity;
 import org.apache.ambari.server.orm.entities.RoleAuthorizationEntity;
-import org.apache.ambari.server.security.authentication.AmbariUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -104,21 +103,14 @@ public class AuthorizationHelper {
     SecurityContext securityContext = SecurityContextHolder.getContext();
 
     Authentication authentication = securityContext.getAuthentication();
-
-    if(authentication == null) {
+    UserIdAuthentication auth;
+    if (authentication instanceof UserIdAuthentication) {
+      auth = (UserIdAuthentication) authentication;
+    } else {
       return -1;
     }
 
-    if (authentication instanceof UserIdAuthentication) {
-      return ((UserIdAuthentication) authentication).getUserId();
-    }
-
-    Object principal = authentication.getPrincipal();
-    if (principal instanceof AmbariUserDetails) {
-      return ((AmbariUserDetails) principal).getUserId();
-    }
-
-    return -1;
+    return auth.getUserId();
   }
 
   /**
