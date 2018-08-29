@@ -52,6 +52,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -82,6 +83,7 @@ import org.apache.ambari.server.controller.spi.ResourceAlreadyExistsException;
 import org.apache.ambari.server.controller.spi.SystemException;
 import org.apache.ambari.server.controller.spi.UnsupportedPropertyException;
 import org.apache.ambari.server.controller.utilities.PropertyHelper;
+import org.apache.ambari.server.security.authorization.RoleAuthorization;
 import org.apache.ambari.server.state.ClientConfigFileDefinition;
 import org.apache.ambari.server.state.Cluster;
 import org.apache.ambari.server.state.Clusters;
@@ -149,6 +151,8 @@ public class ClientConfigResourceProvider extends AbstractControllerResourceProv
                                @Assisted AmbariManagementController managementController) {
     super(propertyIds, keyPropertyIds, managementController);
     gson = new Gson();
+
+    setRequiredGetAuthorizations(EnumSet.of(RoleAuthorization.HOST_VIEW_CONFIGS, RoleAuthorization.SERVICE_VIEW_CONFIGS, RoleAuthorization.CLUSTER_VIEW_CONFIGS));
   }
 
   // ----- ResourceProvider ------------------------------------------------
@@ -164,7 +168,7 @@ public class ClientConfigResourceProvider extends AbstractControllerResourceProv
   }
 
   @Override
-  public Set<Resource> getResources(Request request, Predicate predicate)
+  public Set<Resource> getResourcesAuthorized(Request request, Predicate predicate)
           throws SystemException, UnsupportedPropertyException, NoSuchResourceException, NoSuchParentResourceException {
 
     Set<Resource> resources = new HashSet<>();

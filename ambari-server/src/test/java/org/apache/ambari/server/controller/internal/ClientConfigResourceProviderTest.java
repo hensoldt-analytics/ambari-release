@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -56,6 +56,8 @@ import org.apache.ambari.server.controller.spi.ResourceProvider;
 import org.apache.ambari.server.controller.spi.SystemException;
 import org.apache.ambari.server.controller.utilities.PredicateBuilder;
 import org.apache.ambari.server.controller.utilities.PropertyHelper;
+import org.apache.ambari.server.security.TestAuthenticationFactory;
+import org.apache.ambari.server.security.authorization.AuthorizationException;
 import org.apache.ambari.server.stack.StackManager;
 import org.apache.ambari.server.state.ClientConfigFileDefinition;
 import org.apache.ambari.server.state.Cluster;
@@ -76,6 +78,7 @@ import org.apache.ambari.server.state.StackId;
 import org.apache.ambari.server.state.UserGroupInfo;
 import org.apache.ambari.server.state.ValueAttributesInfo;
 import org.apache.ambari.server.utils.StageUtils;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -83,13 +86,20 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
- * TaskResourceProvider tests.
+ * ClientConfigResourceProviderTest tests.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {ClientConfigResourceProvider.class, StageUtils.class} )
+@PrepareForTest({ClientConfigResourceProvider.class, StageUtils.class})
 public class ClientConfigResourceProviderTest {
+  @After
+  public void clearAuthentication() {
+    SecurityContextHolder.getContext().setAuthentication(null);
+  }
+
   @Test
   public void testCreateResources() throws Exception {
     Resource.Type type = Resource.Type.ClientConfig;
@@ -169,7 +179,104 @@ public class ClientConfigResourceProviderTest {
   }
 
   @Test
-  public void testGetResources() throws Exception {
+  public void testGetResourcesForAdministrator() throws Exception {
+    testGetResources(TestAuthenticationFactory.createAdministrator());
+  }
+
+  @Test
+  public void testGetResourcesForClusterAdministrator() throws Exception {
+    testGetResources(TestAuthenticationFactory.createClusterAdministrator());
+  }
+
+  @Test
+  public void testGetResourcesForClusterOperator() throws Exception {
+    testGetResources(TestAuthenticationFactory.createClusterOperator());
+  }
+
+  @Test
+  public void testGetResourcesForServiceAdministrator() throws Exception {
+    testGetResources(TestAuthenticationFactory.createServiceAdministrator());
+  }
+
+  @Test
+  public void testGetResourcesForServiceOperator() throws Exception {
+    testGetResources(TestAuthenticationFactory.createServiceOperator());
+  }
+
+  @Test
+  public void testGetResourcesForClusterUser() throws Exception {
+    testGetResources(TestAuthenticationFactory.createClusterUser());
+  }
+
+  @Test(expected = AuthorizationException.class)
+  public void testGetResourcesForNoRoleUser() throws Exception {
+    testGetResources(TestAuthenticationFactory.createNoRoleUser());
+  }
+
+  @Test
+  public void testGetResourcesFromCommonServicesForAdministrator() throws Exception {
+    testGetResourcesFromCommonServices(TestAuthenticationFactory.createAdministrator());
+  }
+
+  @Test
+  public void testGetResourcesFromCommonServicesForClusterAdministrator() throws Exception {
+    testGetResourcesFromCommonServices(TestAuthenticationFactory.createClusterAdministrator());
+  }
+
+  @Test
+  public void testGetResourcesFromCommonServicesForClusterOperator() throws Exception {
+    testGetResourcesFromCommonServices(TestAuthenticationFactory.createClusterOperator());
+  }
+
+  @Test
+  public void testGetResourcesFromCommonServicesForServiceAdministrator() throws Exception {
+    testGetResourcesFromCommonServices(TestAuthenticationFactory.createServiceAdministrator());
+  }
+
+  @Test
+  public void testGetResourcesFromCommonServicesForServiceOperator() throws Exception {
+    testGetResourcesFromCommonServices(TestAuthenticationFactory.createServiceOperator());
+  }
+
+  @Test
+  public void testGetResourcesFromCommonServicesForClusterUser() throws Exception {
+    testGetResourcesFromCommonServices(TestAuthenticationFactory.createClusterUser());
+  }
+
+  @Test(expected = AuthorizationException.class)
+  public void testGetResourcesFromCommonServicesForNoRoleUser() throws Exception {
+    testGetResourcesFromCommonServices(TestAuthenticationFactory.createNoRoleUser());
+  }
+
+  @Test
+  public void testDeleteResources() throws Exception {
+    Resource.Type type = Resource.Type.ClientConfig;
+
+    AmbariManagementController managementController = createMock(AmbariManagementController.class);
+
+    // replay
+    replay(managementController);
+
+    ResourceProvider provider = AbstractControllerResourceProvider.getResourceProvider(
+        type,
+        PropertyHelper.getPropertyIds(type),
+        PropertyHelper.getKeyPropertyIds(type),
+        managementController);
+
+    Predicate predicate = new PredicateBuilder().property(
+        ClientConfigResourceProvider.COMPONENT_COMPONENT_NAME_PROPERTY_ID).equals("HDFS_CLIENT").toPredicate();
+    try {
+      provider.deleteResources(new RequestImpl(null, null, null, null), predicate);
+      Assert.fail("Expected an UnsupportedOperationException");
+    } catch (SystemException e) {
+      // expected
+    }
+
+    // verify
+    verify(managementController);
+  }
+
+  private void testGetResources(Authentication authentication) throws Exception {
     Resource.Type type = Resource.Type.ClientConfig;
 
     AmbariManagementController managementController = createNiceMock(AmbariManagementController.class);
@@ -253,7 +360,7 @@ public class ClientConfigResourceProviderTest {
     ServiceComponentHostResponse shr1 = new ServiceComponentHostResponse(clusterName, serviceName,
         componentName, displayName, hostName, publicHostname, desiredState, "", null, null, null,
         null);
-    
+
     Set<ServiceComponentHostResponse> responses = new LinkedHashSet<ServiceComponentHostResponse>();
     responses.add(shr1);
 
@@ -401,6 +508,8 @@ public class ClientConfigResourceProviderTest {
             runtime, process, configMap);
     PowerMock.replayAll();
 
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+
     Set<Resource> resources = provider.getResources(request, predicate);
     assertFalse(resources.isEmpty());
     assertFalse(newFile.exists());
@@ -412,8 +521,7 @@ public class ClientConfigResourceProviderTest {
     PowerMock.verifyAll();
   }
 
-  @Test
-  public void testGetResourcesFromCommonServices() throws Exception {
+  private void testGetResourcesFromCommonServices(Authentication authentication) throws Exception {
     Resource.Type type = Resource.Type.ClientConfig;
 
     AmbariManagementController managementController = createNiceMock(AmbariManagementController.class);
@@ -506,7 +614,7 @@ public class ClientConfigResourceProviderTest {
     ServiceComponentHostResponse shr1 = new ServiceComponentHostResponse(clusterName, serviceName,
         componentName, displayName, hostName, publicHostName, desiredState, "", null, null, null,
         null);
-    
+
     Set<ServiceComponentHostResponse> responses = new LinkedHashSet<ServiceComponentHostResponse>();
     responses.add(shr1);
 
@@ -612,6 +720,8 @@ public class ClientConfigResourceProviderTest {
             runtime, process, configMap);
     PowerMock.replayAll();
 
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+
     Set<Resource> resources = provider.getResources(request, predicate);
     assertFalse(resources.isEmpty());
 
@@ -622,34 +732,5 @@ public class ClientConfigResourceProviderTest {
     PowerMock.verifyAll();
   }
 
-
-
-  @Test
-  public void testDeleteResources() throws Exception {
-    Resource.Type type = Resource.Type.ClientConfig;
-
-    AmbariManagementController managementController = createMock(AmbariManagementController.class);
-
-    // replay
-    replay(managementController);
-
-    ResourceProvider provider = AbstractControllerResourceProvider.getResourceProvider(
-        type,
-        PropertyHelper.getPropertyIds(type),
-        PropertyHelper.getKeyPropertyIds(type),
-        managementController);
-
-    Predicate predicate = new PredicateBuilder().property(
-            ClientConfigResourceProvider.COMPONENT_COMPONENT_NAME_PROPERTY_ID).equals("HDFS_CLIENT").toPredicate();
-    try {
-      provider.deleteResources(new RequestImpl(null, null, null, null), predicate);
-      Assert.fail("Expected an UnsupportedOperationException");
-    } catch (SystemException e) {
-      // expected
-    }
-
-    // verify
-    verify(managementController);
-  }
 
 }
