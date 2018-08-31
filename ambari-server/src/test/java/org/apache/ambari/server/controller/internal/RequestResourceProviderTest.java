@@ -20,6 +20,8 @@ package org.apache.ambari.server.controller.internal;
 
 
 import static org.apache.ambari.server.controller.internal.HostComponentResourceProvider.HOST_COMPONENT_STALE_CONFIGS_PROPERTY_ID;
+import static org.apache.ambari.server.security.TestAuthenticationFactory.createAdministrator;
+import static org.apache.ambari.server.security.TestAuthenticationFactory.createViewUser;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.eq;
@@ -212,6 +214,8 @@ public class RequestResourceProviderTest {
 
     expect(requestDAO.findByPks(Collections.<Long> emptyList(), true)).andReturn(Collections.<RequestEntity>emptyList()).anyTimes();
 
+    prepareGetAuthorizationExpectations();
+
     ActionManager actionManager = createNiceMock(ActionManager.class);
 
     Cluster cluster = createNiceMock(Cluster.class);
@@ -269,6 +273,14 @@ public class RequestResourceProviderTest {
     verify(requestDAO);
   }
 
+  private void prepareGetAuthorizationExpectations() {
+    prepareGetAuthorizationExpectations(true);
+  }
+
+  private void prepareGetAuthorizationExpectations(boolean allowedToAuthorize) {
+    SecurityContextHolder.getContext().setAuthentication(allowedToAuthorize ? createAdministrator() : createViewUser(1L));
+  }
+
   @Test
   public void testGetResources() throws Exception {
     Resource.Type type = Resource.Type.Request;
@@ -314,6 +326,8 @@ public class RequestResourceProviderTest {
     expect(hrcDAO.findAggregateCounts((Long) anyObject())).andReturn(new HashMap<Long, HostRoleCommandStatusSummaryDTO>(){{
       put(1L, HostRoleCommandStatusSummaryDTO.create().inProgress(1));
     }}).anyTimes();
+
+    prepareGetAuthorizationExpectations();
 
     // replay
     replay(managementController, actionManager, requestDAO, hrcDAO, requestMock);
@@ -367,6 +381,8 @@ public class RequestResourceProviderTest {
       put(1L, HostRoleCommandStatusSummaryDTO.create().inProgress(1));
     }}).anyTimes();
 
+    prepareGetAuthorizationExpectations();
+
     // replay
     replay(managementController, actionManager, requestDAO, hrcDAO, requestMock);
 
@@ -419,6 +435,8 @@ public class RequestResourceProviderTest {
     expect(hrcDAO.findAggregateCounts((Long) anyObject())).andReturn(new HashMap<Long, HostRoleCommandStatusSummaryDTO>(){{
       put(1L, HostRoleCommandStatusSummaryDTO.create().inProgress(1));
     }}).anyTimes();
+
+    prepareGetAuthorizationExpectations();
 
     // replay
     replay(managementController, actionManager, requestMock, requestDAO, hrcDAO);
@@ -480,6 +498,7 @@ public class RequestResourceProviderTest {
       put(1L, HostRoleCommandStatusSummaryDTO.create().inProgress(1));
     }}).anyTimes();
 
+    prepareGetAuthorizationExpectations();
 
     // replay
     replay(managementController, actionManager, clusters, cluster, requestMock, requestDAO, hrcDAO);
@@ -548,6 +567,8 @@ public class RequestResourceProviderTest {
       put(1L, HostRoleCommandStatusSummaryDTO.create().inProgress(1));
     }}).anyTimes();
 
+    prepareGetAuthorizationExpectations();
+
     // replay
     replay(managementController, actionManager, requestMock, requestMock1, requestDAO, hrcDAO);
 
@@ -601,6 +622,8 @@ public class RequestResourceProviderTest {
     expect(hrcDAO.findAggregateCounts((Long) anyObject())).andReturn(new HashMap<Long, HostRoleCommandStatusSummaryDTO>(){{
       put(1L, HostRoleCommandStatusSummaryDTO.create().completed(2));
     }}).anyTimes();
+
+    prepareGetAuthorizationExpectations();
 
     // replay
     replay(managementController, actionManager, requestMock0, requestMock1, requestDAO, hrcDAO);
@@ -672,6 +695,8 @@ public class RequestResourceProviderTest {
     expect(hrcDAO.findAggregateCounts(101L)).andReturn(new HashMap<Long, HostRoleCommandStatusSummaryDTO>(){{
       put(1L, HostRoleCommandStatusSummaryDTO.create().inProgress(1).queued(1));
     }}).once();
+
+    prepareGetAuthorizationExpectations();
 
     // replay
     replay(managementController, actionManager, requestMock0, requestMock1, requestDAO, hrcDAO);
@@ -753,6 +778,7 @@ public class RequestResourceProviderTest {
       put(1L, HostRoleCommandStatusSummaryDTO.create().aborted(1).timedout(1));
     }}).once();
 
+    prepareGetAuthorizationExpectations();
 
     // replay
     replay(managementController, actionManager, requestMock0, requestMock1, requestDAO, hrcDAO);
@@ -803,6 +829,27 @@ public class RequestResourceProviderTest {
     verify(managementController, actionManager, requestMock0, requestMock1, requestDAO, hrcDAO);
   }
 
+  @Test(expected = AuthorizationException.class)
+  public void shouldThrowAuthorizationErrorInCaseTheAuthenticatedUserDoesNotHaveTheAppropriatePermissions() throws Exception {
+    // Given
+    prepareGetAuthorizationExpectations(false);
+    final Resource.Type type = Resource.Type.Request;
+    final ResourceProvider provider = AbstractControllerResourceProvider.getResourceProvider(
+        type,
+        PropertyHelper.getPropertyIds(type),
+        PropertyHelper.getKeyPropertyIds(type),
+        createMock(AmbariManagementController.class));
+
+    Map<String, Object> properties = new LinkedHashMap<>();
+    final Request request = PropertyHelper.getUpdateRequest(new LinkedHashMap<String, Object>(), null);
+    final Predicate predicate = new PredicateBuilder().property(RequestResourceProvider.REQUEST_ID_PROPERTY_ID).equals("100").toPredicate();
+
+    // When
+    provider.getResources(request, predicate);
+
+    // Then: see expected exception
+  }
+
   @Test
   public void testUpdateResources_CancelRequest() throws Exception {
     Resource.Type type = Resource.Type.Request;
@@ -835,6 +882,8 @@ public class RequestResourceProviderTest {
     expect(hostRoleCommand.getStatus()).andReturn(HostRoleStatus.IN_PROGRESS).anyTimes();
 
     RequestStatusResponse response = createNiceMock(RequestStatusResponse.class);
+
+    prepareGetAuthorizationExpectations();
 
     // replay
     replay(managementController, actionManager, hostRoleCommand, clusters, requestMock, response, stage);
@@ -1580,6 +1629,7 @@ public class RequestResourceProviderTest {
       put(1L, HostRoleCommandStatusSummaryDTO.create().inProgress(1));
     }}).anyTimes();
 
+    prepareGetAuthorizationExpectations();
 
     // replay
     replay(managementController, actionManager, clusters, requestMock, requestDAO, hrcDAO);
@@ -1634,6 +1684,8 @@ public class RequestResourceProviderTest {
     expect(requestDAO.findByPks(capture(requestIdsCapture), eq(true))).andReturn(Collections.singletonList(requestMock));
     expect(hrcDAO.findAggregateCounts((Long) anyObject())).andReturn(
       Collections.<Long, HostRoleCommandStatusSummaryDTO>emptyMap()).anyTimes();
+
+    prepareGetAuthorizationExpectations();
 
     // replay
     replay(managementController, actionManager, clusters, requestMock, requestDAO, hrcDAO);
@@ -1731,6 +1783,8 @@ public class RequestResourceProviderTest {
         ? Optional.of("some reason")
         : Optional.<String>absent();
       expect(logicalRequest.getFailureReason()).andReturn(failureReason).anyTimes();
+
+      prepareGetAuthorizationExpectations();
 
       replayAll();
 
