@@ -8504,6 +8504,7 @@ class TestAmbariServer:#(TestCase):
     options.ldap_bind_anonym = None
     options.ldap_sync_admin_name = None
     options.ldap_sync_username_collisions_behavior = None
+    options.ldap_sync_disable_endpoint_identification = None
     options.ldap_sync_admin_password = None
     options.custom_trust_store = None
     options.trust_store_type = None

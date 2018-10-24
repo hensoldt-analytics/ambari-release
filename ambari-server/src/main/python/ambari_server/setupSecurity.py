@@ -613,6 +613,7 @@ def init_ldap_properties_list_reqd(properties, options):
     LdapPropTemplate(properties, options.ldap_referral, "authentication.ldap.referral", "Referral method [follow/ignore] {0}: ", REGEX_REFERRAL, True),
     LdapPropTemplate(properties, options.ldap_bind_anonym, "authentication.ldap.bindAnonymously", "Bind anonymously* [true/false] {0}: ", REGEX_TRUE_FALSE, False, "false"),
     LdapPropTemplate(properties, options.ldap_sync_username_collisions_behavior, "ldap.sync.username.collision.behavior", "Handling behavior for username collisions [convert/skip] for LDAP sync* {0}: ", REGEX_SKIP_CONVERT, False, "convert"),
+    LdapPropTemplate(properties, options.ldap_sync_disable_endpoint_identification, "ldap.sync.disable.endpoint.identification", "Disable endpoint identification during SSL handshake [true/false] {0}: ", REGEX_TRUE_FALSE, False, "false")
   ]
   return ldap_properties
 

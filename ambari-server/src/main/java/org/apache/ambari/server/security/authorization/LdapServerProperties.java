@@ -62,6 +62,7 @@ public class LdapServerProperties {
 
   private String syncUserMemberFilter = "";
   private String syncGroupMemberFilter = "";
+  private boolean disableEndpointIdentification = false;
   //LDAP pagination properties
   private boolean paginationEnabled = true;
   private String adminGroupMappingMemberAttr = ""; // custom group search filter for admin mappings
@@ -285,6 +286,12 @@ public class LdapServerProperties {
     return referralMethod;
   }
 
+  public boolean isDisableEndpointIdentification() {
+    return disableEndpointIdentification;
+  }
+  public void setDisableEndpointIdentification(boolean disableEndpointIdentification) {
+    this.disableEndpointIdentification = disableEndpointIdentification;
+  }
   public boolean isPaginationEnabled() {
     return paginationEnabled;
   }

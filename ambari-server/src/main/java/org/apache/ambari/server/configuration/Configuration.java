@@ -701,6 +701,16 @@ public class Configuration {
       "ldap.sync.username.collision.behavior", "convert");
 
   /**
+   * Determines whether to disable endpoint identification (hostname verification) during SSL handshake
+   * for LDAP sync. This option takes effect only if --ldap-ssl is set to 'true'
+   */
+  @Markdown(
+      description = "Determines whether to disable endpoint identification (hostname verification) during SSL handshake for LDAP sync. This option takes effect only if authentication.ldap.useSSL is set to 'true'"
+  )
+  public static final ConfigurationProperty<Boolean> LDAP_SYNC_DISABLE_ENDPOINT_IDENTIFICATION = new ConfigurationProperty<>(
+      "ldap.sync.disable.endpoint.identification", Boolean.FALSE);
+
+  /**
    * The location on the Ambari Server where stack extensions exist.
    */
   @Markdown(
@@ -4018,6 +4028,7 @@ public class Configuration {
     ldapServerProperties.setPrimaryUrl(getProperty(LDAP_PRIMARY_URL));
     ldapServerProperties.setSecondaryUrl(getProperty(LDAP_SECONDARY_URL));
     ldapServerProperties.setUseSsl(Boolean.parseBoolean(getProperty(LDAP_USE_SSL)));
+    ldapServerProperties.setDisableEndpointIdentification(Boolean.parseBoolean(getProperty(LDAP_SYNC_DISABLE_ENDPOINT_IDENTIFICATION)));
     ldapServerProperties.setAnonymousBind(Boolean.parseBoolean(getProperty(LDAP_BIND_ANONYMOUSLY)));
     ldapServerProperties.setManagerDn(getProperty(LDAP_MANAGER_DN));
     String ldapPasswordProperty = getProperty(LDAP_MANAGER_PASSWORD);
