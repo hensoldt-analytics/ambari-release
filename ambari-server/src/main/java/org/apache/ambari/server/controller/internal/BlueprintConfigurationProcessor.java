@@ -1734,6 +1734,11 @@ public class BlueprintConfigurationProcessor {
                                          Map<String, Map<String, String>> properties,
                                          ClusterTopology topology) {
 
+      if (origValue == null) {
+        LOG.info("Property {} is null, skipping search for host group placeholder", propertyName);
+        return null;
+      }
+
       HostGroups hostGroups = new HostGroups(topology, propertyName);
 
       //todo: getHostStrings (?)
@@ -1774,6 +1779,11 @@ public class BlueprintConfigurationProcessor {
                                                     String origValue,
                                                     Map<String, Map<String, String>> properties,
                                                     ClusterTopology topology) {
+      if (origValue == null) {
+        LOG.info("Property {} is null, skipping search for host group placeholder", propertyName);
+        return Collections.emptyList();
+      }
+
       //todo: getHostStrings
       Matcher m = HostGroup.HOSTGROUP_REGEX.matcher(origValue);
       Set<String> hostGroups = new HashSet<>();
