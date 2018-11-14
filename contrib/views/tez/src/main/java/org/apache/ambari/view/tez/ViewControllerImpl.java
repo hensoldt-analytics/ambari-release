@@ -37,11 +37,13 @@ import java.util.Map;
 public class ViewControllerImpl implements ViewController {
 
   private AmbariApi ambariApi;
+  private ViewContext viewContext;
 
   private static final Logger LOG = LoggerFactory.getLogger(ViewControllerImpl.class);
 
   @Inject
   public ViewControllerImpl(ViewContext viewContext) {
+    this.viewContext = viewContext;
     this.ambariApi = new AmbariApi(viewContext);
   }
 
@@ -89,7 +91,7 @@ public class ViewControllerImpl implements ViewController {
   @Override
   public String getYARNProtocol() {
     try {
-      return ambariApi.getServices().getYARNProtocol();
+      return viewContext.getCluster() == null ? "" : ambariApi.getServices().getYARNProtocol();
     } catch (AmbariApiException ex) {
       String message = "Failed to find YARN http/https protocol configuration value!";
       LOG.error(message, ex);

@@ -247,7 +247,7 @@ function setUI1Configs(parameters) {
 }
 
 function setUI2Configs(parameters) {
-  var configs = getConfigs(parameters);
+  var configs = getConfigs(parameters["parameters"]);
 
   $.extend(true, ENV, {
     isStandalone: false,
