@@ -55,7 +55,7 @@ App.BackgroundOperationsController = Em.Controller.extend({
    * Start polling, when <code>isWorking</code> become true
    */
   startPolling: function(){
-    if(this.get('isWorking')){
+    if(this.get('isWorking') && !App.get('isOnlyViewUser')){
       this.requestMostRecent();
       App.updater.run(this, 'requestMostRecent', 'isWorking', App.bgOperationsUpdateInterval);
     }
