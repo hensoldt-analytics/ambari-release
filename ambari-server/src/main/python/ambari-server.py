@@ -54,7 +54,7 @@ from ambari_server.setupActions import BACKUP_ACTION, LDAP_SETUP_ACTION, LDAP_SY
   SETUP_JCE_ACTION, SET_CURRENT_ACTION, START_ACTION, STATUS_ACTION, STOP_ACTION, UPGRADE_ACTION, \
   SETUP_JCE_ACTION, SET_CURRENT_ACTION, ENABLE_STACK_ACTION, SETUP_SSO_ACTION, \
   DB_PURGE_ACTION, INSTALL_MPACK_ACTION, UNINSTALL_MPACK_ACTION, UPGRADE_MPACK_ACTION, PAM_SETUP_ACTION, MIGRATE_LDAP_PAM_ACTION, KERBEROS_SETUP_ACTION
-from ambari_server.setupSecurity import setup_ldap, sync_ldap, setup_master_key, setup_ambari_krb5_jaas, setup_pam, migrate_ldap_pam
+from ambari_server.setupSecurity import setup_ldap, sync_ldap, setup_master_key, setup_ambari_krb5_jaas, setup_pam, migrate_ldap_pam, LDAP_TYPES
 from ambari_server.userInput import get_validated_string_input
 from ambari_server.kerberos_setup import setup_kerberos
 
@@ -545,6 +545,7 @@ def check_ldap_url_options(option, opt_str, value, parser):
 
 @OsFamilyFuncImpl(OsFamilyImpl.DEFAULT)
 def init_ldap_setup_parser_options(parser):
+  parser.add_option('--ldap-type', default=None, help="Specify ldap type [{}] for offering defaults for missing options.".format("/".join(LDAP_TYPES)), dest="ldap_type")
   parser.add_option('--ldap-url', action="callback", callback=check_ldap_url_options, type='str', default=None, help="Primary URL for LDAP (must not be used together with --ldap-primary-host and --ldap-primary-port)", dest="ldap_url")
   parser.add_option('--ldap-primary-host', action="callback", callback=check_ldap_url_options, type='str', default=None, help="Primary Host for LDAP (must not be used together with --ldap-url)", dest="ldap_primary_host")
   parser.add_option('--ldap-primary-port', action="callback", callback=check_ldap_url_options, type='int', default=None, help="Primary Port for LDAP (must not be used together with --ldap-url)", dest="ldap_primary_port")

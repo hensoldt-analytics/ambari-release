@@ -64,7 +64,7 @@ logger = logging.getLogger(__name__)
 
 LDAP_AD="AD"
 LDAP_IPA="IPA"
-LDAP_GENERIC="Generic LDAP"
+LDAP_GENERIC="Generic"
 
 LDAP_TYPES = [LDAP_AD, LDAP_IPA, LDAP_GENERIC]
 
@@ -220,13 +220,13 @@ def adjust_directory_permissions(ambari_user):
     print_info_msg("Changing ownership: {0} {1} {2}".format(path, user, recursive))
     change_owner(path, user, recursive)
 
-def configure_ldap_password(options):
+def configure_ldap_password(ldap_manager_password_option, interactive_mode):
   password_default = ""
   password_prompt = 'Enter Bind DN Password: '
   confirm_password_prompt = 'Confirm Bind DN Password: '
   password_pattern = ".*"
   password_descr = "Invalid characters in password."
-  password = read_password(password_default, password_pattern, password_prompt, password_descr, options.ldap_manager_password, confirm_password_prompt)
+  password = read_password(password_default, password_pattern, password_prompt, password_descr, ldap_manager_password_option, confirm_password_prompt) if interactive_mode else ldap_manager_password_option
 
   return password
 
@@ -704,13 +704,24 @@ def update_ldap_configuration(options, properties, ldap_property_value_map):
   request_data['Configuration']['properties'] = ldap_property_value_map
   perform_changes_via_rest_api(properties, admin_login, admin_password, SETUP_LDAP_CONFIG_URL, 'PUT', request_data)
 
-def query_ldap_type():
+def query_ldap_type(ldap_type_option):
   return get_validated_string_input("Please select the type of LDAP you want to use ({}):".format(", ".join(LDAP_TYPES)),
                                     None,
                                     REGEX_LDAP_TYPE,
                                     "Please enter one of the followings '{}'!".format("', '".join(LDAP_TYPES)),
                                     False,
-                                    False)
+                                    False,
+                                    answer = ldap_type_option)
+
+
+def is_interactive(property_list):
+  for prop in property_list:
+    #print('Property {} = {} (option  = {})'.format(prop.prop_name, prop.ldap_prop_value, prop.option)) #I left this log here intentionally even it's commented out
+    if not prop.option and not prop.allow_empty_prompt:
+      return True
+
+  return False
+
 
 def setup_ldap(options):
   logger.info("Setup LDAP.")
@@ -744,7 +755,7 @@ def setup_ldap(options):
     options.ldap_secondary_host = options.ldap_secondary_url.split(':')[0]
     options.ldap_secondary_port = options.ldap_secondary_url.split(':')[1]
 
-  ldap_type = query_ldap_type()
+  ldap_type = query_ldap_type(options.ldap_type)
 
   ldap_property_list_reqd = init_ldap_properties_list_reqd(properties, options, ldap_type)
 
@@ -766,10 +777,11 @@ def setup_ldap(options):
 
   ldap_property_value_map = {}
   ldap_property_values_in_ambari_properties = {}
+  interactive_mode = is_interactive(ldap_property_list_reqd)
   for ldap_prop in ldap_property_list_reqd:
     input = get_validated_string_input(ldap_prop.ldap_prop_val_prompt, ldap_prop.ldap_prop_value, ldap_prop.prompt_regex,
                                        "Invalid characters in the input!", False, ldap_prop.allow_empty_prompt,
-                                       answer = ldap_prop.option)
+                                       answer = ldap_prop.option) if interactive_mode else ldap_prop.option
     if input is not None and input != "":
       ldap_property_value_map[ldap_prop.prop_name] = input
 
@@ -781,9 +793,9 @@ def setup_ldap(options):
         username = get_validated_string_input(
           format_prop_val_prompt("Bind DN{0}: ", get_value_from_properties(properties, LDAP_MGR_USERNAME_PROPERTY, ldap_mgr_dn_default)),
           ldap_mgr_dn_default, ".*",
-          "Invalid characters in the input!", False, False, answer = options.ldap_manager_dn)
+          "Invalid characters in the input!", False, False, answer = options.ldap_manager_dn) if interactive_mode else ldap_prop.option
         ldap_property_value_map[LDAP_MGR_USERNAME_PROPERTY] = username
-        mgr_password = configure_ldap_password(options)
+        mgr_password = configure_ldap_password(options.ldap_manager_password, interactive_mode)
         ldap_property_value_map[LDAP_MGR_PASSWORD_PROPERTY] = mgr_password
     elif ldap_prop.prop_name == LDAP_USE_SSL:
       ldaps = (input and input.lower() == 'true')
@@ -798,14 +810,14 @@ def setup_ldap(options):
         if not custom_trust_store:
           custom_trust_store = get_YN_input("Do you want to provide custom TrustStore for Ambari [y/n] ({0})?".
                                           format(truststore_default),
-                                          truststore_set)
+                                          truststore_set) if interactive_mode else None
         if custom_trust_store:
           ts_type = get_validated_string_input("TrustStore type [jks/jceks/pkcs12] {0}:".format(get_prompt_default(SSL_TRUSTSTORE_TYPE_DEFAULT)),
-            SSL_TRUSTSTORE_TYPE_DEFAULT, "^(jks|jceks|pkcs12)?$", "Wrong type", False, answer=options.trust_store_type)
+            SSL_TRUSTSTORE_TYPE_DEFAULT, "^(jks|jceks|pkcs12)?$", "Wrong type", False, answer=options.trust_store_type) if interactive_mode else options.trust_store_type
           ts_path = None
           while True:
             ts_path = get_validated_string_input("Path to TrustStore file {0}:".format(get_prompt_default(SSL_TRUSTSTORE_PATH_DEFAULT)),
-              SSL_TRUSTSTORE_PATH_DEFAULT, ".*", False, False, answer = options.trust_store_path)
+              SSL_TRUSTSTORE_PATH_DEFAULT, ".*", False, False, answer = options.trust_store_path)  if interactive_mode else options.trust_store_path
             if os.path.exists(ts_path):
               break
             else:
@@ -813,7 +825,7 @@ def setup_ldap(options):
               hasAnswer = options.trust_store_path is not None and options.trust_store_path
               quit_if_has_answer(hasAnswer)
 
-          ts_password = read_password("", ".*", "Password for TrustStore:", "Invalid characters in password", options.trust_store_password)
+          ts_password = read_password("", ".*", "Password for TrustStore:", "Invalid characters in password", options.trust_store_password) if interactive_mode else options.trust_store_password
 
           ldap_property_values_in_ambari_properties[SSL_TRUSTSTORE_TYPE_PROPERTY] = ts_type
           ldap_property_values_in_ambari_properties[SSL_TRUSTSTORE_PATH_PROPERTY] = ts_path
