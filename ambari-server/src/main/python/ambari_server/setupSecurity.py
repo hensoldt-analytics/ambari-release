@@ -78,6 +78,8 @@ SERVER_API_LDAP_URL = 'ldap_sync_events'
 
 PAM_CONFIG_FILE = 'pam.configuration'
 
+LDAP_DISABLE_ENDPOINT_IDENTIFICATION = "ambari.ldap.advanced.disable_endpoint_identification"
+
 
 def read_master_key(isReset=False, options = None):
   passwordPattern = ".*"
@@ -204,12 +206,12 @@ def adjust_directory_permissions(ambari_user):
     print_info_msg("Changing ownership: {0} {1} {2}".format(path, user, recursive))
     change_owner(path, user, recursive)
 
-def configure_ldap_password(options):
+def configure_ldap_password(ldap_manager_password_option, interactive_mode):
   passwordDefault = ""
   passwordPrompt = 'Enter Manager Password* : '
   passwordPattern = ".*"
   passwordDescr = "Invalid characters in password."
-  password = read_password(passwordDefault, passwordPattern, passwordPrompt, passwordDescr, options.ldap_manager_password)
+  password = read_password(passwordDefault, passwordPattern, passwordPrompt, passwordDescr, ldap_manager_password_option) if interactive_mode else ldap_manager_password_option
 
   return password
 
@@ -613,9 +615,17 @@ def init_ldap_properties_list_reqd(properties, options):
     LdapPropTemplate(properties, options.ldap_referral, "authentication.ldap.referral", "Referral method [follow/ignore] {0}: ", REGEX_REFERRAL, True),
     LdapPropTemplate(properties, options.ldap_bind_anonym, "authentication.ldap.bindAnonymously", "Bind anonymously* [true/false] {0}: ", REGEX_TRUE_FALSE, False, "false"),
     LdapPropTemplate(properties, options.ldap_sync_username_collisions_behavior, "ldap.sync.username.collision.behavior", "Handling behavior for username collisions [convert/skip] for LDAP sync* {0}: ", REGEX_SKIP_CONVERT, False, "convert"),
-    LdapPropTemplate(properties, options.ldap_sync_disable_endpoint_identification, "ldap.sync.disable.endpoint.identification", "Disable endpoint identification during SSL handshake [true/false] {0}: ", REGEX_TRUE_FALSE, False, "false")
   ]
   return ldap_properties
+
+
+def is_interactive(property_list):
+  for prop in property_list:
+    if not prop.option and not prop.allow_empty_prompt:
+      return True
+
+  return False
+
 
 def setup_ldap(options):
   logger.info("Setup LDAP.")
@@ -657,10 +667,11 @@ def setup_ldap(options):
   SSL_TRUSTSTORE_PATH_DEFAULT = get_value_from_properties(properties, SSL_TRUSTSTORE_PATH_PROPERTY)
 
   ldap_property_value_map = {}
+  interactive_mode = is_interactive(ldap_property_list_reqd)
   for ldap_prop in ldap_property_list_reqd:
     input = get_validated_string_input(ldap_prop.ldap_prop_val_prompt, ldap_prop.ldap_prop_name, ldap_prop.prompt_regex,
                                        "Invalid characters in the input!", False, ldap_prop.allow_empty_prompt,
-                                       answer = ldap_prop.option)
+                                       answer = ldap_prop.option) if interactive_mode else ldap_prop.option
     if input is not None and input != "":
       ldap_property_value_map[ldap_prop.prop_name] = input
 
@@ -671,9 +682,9 @@ def setup_ldap(options):
   if not anonymous:
     username = get_validated_string_input("Manager DN* {0}: ".format(
      get_prompt_default(LDAP_MGR_DN_DEFAULT)), LDAP_MGR_DN_DEFAULT, ".*",
-      "Invalid characters in the input!", False, False, answer = options.ldap_manager_dn)
+      "Invalid characters in the input!", False, False, answer = options.ldap_manager_dn) if interactive_mode else options.ldap_manager_dn
     ldap_property_value_map[LDAP_MGR_USERNAME_PROPERTY] = username
-    mgr_password = configure_ldap_password(options)
+    mgr_password = configure_ldap_password(options.ldap_manager_password, interactive_mode)
     ldap_property_value_map[LDAP_MGR_PASSWORD_PROPERTY] = mgr_password
 
   useSSL = ldap_property_value_map["authentication.ldap.useSSL"]
@@ -681,6 +692,13 @@ def setup_ldap(options):
   ts_password = None
 
   if ldaps:
+    disable_endpoint_identification = get_validated_string_input("Disable endpoint identification during SSL handshake [true/false] ({0}): ".format("false"), "false",
+                                        REGEX_TRUE_FALSE, "Invalid characters in the input!", False, allowEmpty=True,
+                                        answer=options.ldap_sync_disable_endpoint_identification) if interactive_mode else options.ldap_sync_disable_endpoint_identification
+
+    if disable_endpoint_identification is not None:
+      ldap_property_value_map[LDAP_DISABLE_ENDPOINT_IDENTIFICATION] = disable_endpoint_identification
+
     truststore_default = "n"
     truststore_set = bool(SSL_TRUSTSTORE_PATH_DEFAULT)
     if truststore_set:
@@ -689,14 +707,14 @@ def setup_ldap(options):
     if not custom_trust_store:
       custom_trust_store = get_YN_input("Do you want to provide custom TrustStore for Ambari [y/n] ({0})?".
                                       format(truststore_default),
-                                      truststore_set)
+                                      truststore_set) if interactive_mode else None
     if custom_trust_store:
       ts_type = get_validated_string_input("TrustStore type [jks/jceks/pkcs12] {0}:".format(get_prompt_default(SSL_TRUSTSTORE_TYPE_DEFAULT)),
-        SSL_TRUSTSTORE_TYPE_DEFAULT, "^(jks|jceks|pkcs12)?$", "Wrong type", False, answer=options.trust_store_type)
+        SSL_TRUSTSTORE_TYPE_DEFAULT, "^(jks|jceks|pkcs12)?$", "Wrong type", False, answer=options.trust_store_type) if interactive_mode else options.trust_store_type
       ts_path = None
       while True:
         ts_path = get_validated_string_input("Path to TrustStore file {0}:".format(get_prompt_default(SSL_TRUSTSTORE_PATH_DEFAULT)),
-          SSL_TRUSTSTORE_PATH_DEFAULT, ".*", False, False, answer = options.trust_store_path)
+          SSL_TRUSTSTORE_PATH_DEFAULT, ".*", False, False, answer = options.trust_store_path) if interactive_mode else options.trust_store_path
         if os.path.exists(ts_path):
           break
         else:
@@ -704,7 +722,7 @@ def setup_ldap(options):
           hasAnswer = options.trust_store_path is not None and options.trust_store_path
           quit_if_has_answer(hasAnswer)
 
-      ts_password = read_password("", ".*", "Password for TrustStore:", "Invalid characters in password", options.trust_store_password)
+      ts_password = read_password("", ".*", "Password for TrustStore:", "Invalid characters in password", options.trust_store_password) if interactive_mode else options.trust_store_password
 
       ldap_property_value_map[SSL_TRUSTSTORE_TYPE_PROPERTY] = ts_type
       ldap_property_value_map[SSL_TRUSTSTORE_PATH_PROPERTY] = ts_path
