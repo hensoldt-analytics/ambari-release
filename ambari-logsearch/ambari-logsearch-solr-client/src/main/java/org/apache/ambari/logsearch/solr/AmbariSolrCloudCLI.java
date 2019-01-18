@@ -37,8 +37,8 @@ public class AmbariSolrCloudCLI {
 
   private static final Logger LOG = LoggerFactory.getLogger(AmbariSolrCloudCLI.class);
 
-  private static final int ZK_CLIENT_TIMEOUT = 15000;
-  private static final int ZK_CLIENT_CONNECT_TIMEOUT = 15000;
+  private static final int ZK_CLIENT_TIMEOUT = 60000;
+  private static final int ZK_CLIENT_CONNECT_TIMEOUT = 60000;
   private static final String CREATE_COLLECTION_COMMAND = "create-collection";
   private static final String UPLOAD_CONFIG_COMMAND = "upload-config";
   private static final String DOWNLOAD_CONFIG_COMMAND = "download-config";
