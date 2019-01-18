@@ -220,6 +220,7 @@ class TestCustomServiceOrchestrator(TestCase):
     except AgentException:
       pass # Expected
 
+  @patch.object(CustomServiceOrchestrator, "conditionally_remove_command_file")
   @patch.object(FileCache, "get_custom_resources_subdir")
   @patch.object(CustomServiceOrchestrator, "resolve_script_path")
   @patch.object(CustomServiceOrchestrator, "resolve_hook_script_path")
@@ -235,7 +236,8 @@ class TestCustomServiceOrchestrator(TestCase):
                       get_host_scripts_base_dir_mock, 
                       resolve_hook_script_path_mock, 
                       resolve_script_path_mock,
-                      get_custom_resources_subdir_mock):
+                      get_custom_resources_subdir_mock,
+                      conditionally_remove_command_file_mock):
     
     FileCache_mock.return_value = None
     command = {
@@ -267,6 +269,7 @@ class TestCustomServiceOrchestrator(TestCase):
     unix_process_id = 111
     orchestrator.commands_in_progress = {command['taskId']: unix_process_id}
     get_hook_base_dir_mock.return_value = "/hooks/"
+    conditionally_remove_command_file_mock.return_value = False
     # normal run case
     run_file_mock.return_value = {
         'stdout' : 'sss',
@@ -311,6 +314,7 @@ class TestCustomServiceOrchestrator(TestCase):
 
     pass
 
+  @patch.object(CustomServiceOrchestrator, "conditionally_remove_command_file")
   @patch("ambari_commons.shell.kill_process_with_children")
   @patch.object(CustomServiceOrchestrator, "resolve_script_path")
   @patch.object(CustomServiceOrchestrator, "resolve_hook_script_path")
@@ -325,7 +329,8 @@ class TestCustomServiceOrchestrator(TestCase):
                       get_hook_base_dir_mock, get_service_base_dir_mock,
                       get_host_scripts_base_dir_mock,
                       resolve_hook_script_path_mock, resolve_script_path_mock,
-                      kill_process_with_children_mock):
+                      kill_process_with_children_mock, conditionally_remove_command_file_mock):
+    conditionally_remove_command_file_mock.return_value = False
     FileCache_mock.return_value = None
     command = {
       'role' : 'REGION_SERVER',
@@ -459,6 +464,7 @@ class TestCustomServiceOrchestrator(TestCase):
     self.assertEqual(runningCommand['status'], ActionQueue.FAILED_STATUS)
 
 
+  @patch.object(CustomServiceOrchestrator, "conditionally_remove_command_file")
   @patch.object(AmbariConfig, "get")
   @patch.object(CustomServiceOrchestrator, "dump_command_to_json")
   @patch.object(PythonExecutor, "run_file")
@@ -466,7 +472,9 @@ class TestCustomServiceOrchestrator(TestCase):
   @patch.object(FileCache, "get_custom_actions_base_dir")
   def test_runCommand_custom_action(self, get_custom_actions_base_dir_mock,
                                     FileCache_mock,
-                                    run_file_mock, dump_command_to_json_mock, ambari_config_get):
+                                    run_file_mock, dump_command_to_json_mock, ambari_config_get,
+                                    conditionally_remove_command_file_mock):
+    conditionally_remove_command_file_mock.return_value = False
     ambari_config_get.return_value = "0"
     FileCache_mock.return_value = None
     get_custom_actions_base_dir_mock.return_value = "some path"
@@ -552,6 +560,7 @@ class TestCustomServiceOrchestrator(TestCase):
     self.assertEqual(runCommand_mock.return_value, status)
 
 
+  @patch.object(CustomServiceOrchestrator, "conditionally_remove_command_file")
   @patch.object(CustomServiceOrchestrator, "get_py_executor")
   @patch.object(CustomServiceOrchestrator, "dump_command_to_json")
   @patch.object(FileCache, "__init__")
@@ -559,8 +568,10 @@ class TestCustomServiceOrchestrator(TestCase):
   def test_runCommand_background_action(self, get_custom_actions_base_dir_mock,
                                     FileCache_mock,
                                     dump_command_to_json_mock,
-                                    get_py_executor_mock):
+                                    get_py_executor_mock,
+                                    conditionally_remove_command_file_mock):
     FileCache_mock.return_value = None
+    conditionally_remove_command_file_mock.return_value = False
     get_custom_actions_base_dir_mock.return_value = "some path"
     _, script = tempfile.mkstemp()
     command = {
