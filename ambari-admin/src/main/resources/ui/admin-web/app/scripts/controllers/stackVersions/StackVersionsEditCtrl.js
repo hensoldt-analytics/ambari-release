@@ -38,6 +38,10 @@ angular.module('ambariAdminConsole')
   $scope.isGPLRepo = function (repository) {
     return repository.Repositories.tags.indexOf('GPL') >= 0;
   };
+  
+  $scope.isRedhat = function(repo) {
+    return repo.Repositories.os_type && repo.Repositories.os_type.includes('redhat');
+  };
 
   $scope.showRepo = function (repository) {
     return $scope.isGPLAccepted || !$scope.isGPLRepo(repository);
@@ -66,6 +70,7 @@ angular.module('ambariAdminConsole')
         $scope.defaulfOSRepos[os.OperatingSystems.os_type] = {};
         os.repositories.forEach(function(repo) {
           $scope.defaulfOSRepos[os.OperatingSystems.os_type][repo.Repositories.repo_id] = repo.Repositories.base_url;
+          repo.Repositories.initial_repo_id = repo.Repositories.repo_id;
         });
       });
       $scope.repoVersionFullName = response.repoVersionFullName;
@@ -309,7 +314,7 @@ angular.module('ambariAdminConsole')
         enabled = true
       }
     });
-    return !enabled;
+    return !(enabled || $scope.useRedhatSatellite);
   };
 
   $scope.cancel = function () {
@@ -331,15 +336,28 @@ angular.module('ambariAdminConsole')
         }
       });
     }
+  };
+
+  $scope.useRedHatCheckbox = function() {
     if ($scope.useRedhatSatellite) {
       ConfirmationModal.show(
-          $t('common.important'),
-          {
-            "url": 'views/modals/BodyForUseRedhatSatellite.html'
-          }
+        $t('versions.useRedhatSatellite.title'),
+        {
+          "url": 'views/modals/BodyForUseRedhatSatellite.html'
+        }
       ).catch(function () {
         $scope.useRedhatSatellite = !$scope.useRedhatSatellite;
       });
+    } else {
+      if ($scope.osList) {
+        $scope.osList.forEach(function(os) {
+          if (os.repositories) {
+            os.repositories.forEach(function(repo) {
+              repo.isEditing = false;
+            })
+          }
+        });
+      }
     }
   };
 

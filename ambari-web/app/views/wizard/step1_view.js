@@ -64,19 +64,64 @@ App.WizardStep1View = Em.View.extend({
     });
   },
 
+  editableRepoView: Em.View.extend({
+    templateName: require('templates/wizard/step1/editable_repo'),
+    classNames: ['editable-repo'],
+    /**
+     * @type {boolean}
+     */
+    isEditing: false,
+
+    /**
+     * @type {?App.Repository}
+     */
+    repository: null,
+  
+    /**
+     * @type {boolean}
+     */
+    isRedhat: function() {
+      return this.get('parentView').isRedhat(this.get('repository'));
+    }.property('repository'),
+
+    /**
+     * @type {boolean}
+     */
+    showEditIcon: Em.computed.and('controller.selectedStack.useRedhatSatellite', '!isEditing', 'isRedhat'),
+
+    /**
+     * @type {boolean}
+     */
+    showRevertIcon: function() {
+      return this.get('isEditing') && (this.get('repository.repoId') !== this.get('repository.originalRepoId'));
+    }.property('isEditing', 'repository.repoId'),
+
+    didInsertElement: function() {
+      this.set('isEditing', false);
+    }.observes('controller.selectedStack.useRedhatSatellite'),
+
+    revertToOriginal: function() {
+      this.set('repository.repoId', this.get('repository.originalRepoId'))
+    },
+
+    editRepoId: function() {
+      this.set('isEditing', true);
+    }
+  }),
+
   /**
    * Disable submit button flag
    *
    * @type {bool}
    */
-  isSubmitDisabled: Em.computed.or('invalidFormatUrlExist', 'isNoOsChecked', 'isNoOsFilled', 'controller.content.isCheckInProgress', 'App.router.btnClickInProgress', '!controller.isLoadingComplete'),
+  isSubmitDisabled: Em.computed.or('invalidFormatUrlExist', 'isNoOsChecked', 'isAnyOsEmpty', 'controller.content.isCheckInProgress', 'App.router.btnClickInProgress', '!controller.isLoadingComplete'),
 
   /**
    * Show warning message flag
    *
    * @type {bool}
    */
-  warningExist: Em.computed.or('invalidFormatUrlExist', 'isNoOsChecked', 'isNoOsFilled'),
+  warningExist: Em.computed.or('invalidFormatUrlExist', 'isNoOsChecked', 'isAnyOsEmpty'),
 
   skipVerifyBaseUrl: Em.computed.or('controller.selectedStack.skipValidationChecked', 'controller.selectedStack.useRedhatSatellite'),
 
@@ -171,9 +216,6 @@ App.WizardStep1View = Em.View.extend({
    */
   invalidFormatUrlExist: function () {
     var allRepositories = this.get('allRepositories');
-    if (!allRepositories) {
-      return false;
-    }
     if (this.get('controller.selectedStack.useRedhatSatellite')) {
       allRepositories = allRepositories.filter(this.isRedhat);
     }
@@ -202,16 +244,15 @@ App.WizardStep1View = Em.View.extend({
   },
 
   /**
-   * If all OSes are empty
+   * If any OS is empty
    * @type {bool}
    */
-  isNoOsFilled: function () {
+  isAnyOsEmpty: function () {
     var operatingSystems = this.get('controller.selectedStack.operatingSystems');
     if (this.get('controller.selectedStack.useRedhatSatellite') || Em.isNone(operatingSystems)) {
       return false;
     }
-    var selectedOS = operatingSystems.filterProperty('isSelected', true);
-    return selectedOS.everyProperty('isNotFilled', true);
+    return operatingSystems.filterProperty('isSelected').someProperty('isNotFilled', true);
   }.property('controller.selectedStack.operatingSystems.@each.isSelected', 'controller.selectedStack.operatingSystems.@each.isNotFilled', 'controller.selectedStack.useRedhatSatellite'),
 
   popoverView: Em.View.extend({
@@ -232,15 +273,17 @@ App.WizardStep1View = Em.View.extend({
     classNames: ['checkbox'],
     disabledBinding: 'controller.selectedStack.usePublicRepo',
     click: function () {
-      // click triggered before value is toggled, so if-statement is inverted
-      if (!this.get('controller.selectedStack.useRedhatSatellite')) {
-        App.ModalPopup.show({
-          header: Em.I18n.t('common.important'),
-          secondary: false,
-          bodyClass: Ember.View.extend({
-            template: Ember.Handlebars.compile(Em.I18n.t('installer.step1.advancedRepo.useRedhatSatellite.warning'))
-          })
-        });
+      if (!this.get('disabled')) {
+        if (this.get('controller.selectedStack.useRedhatSatellite')) {
+          this.toggleProperty('controller.selectedStack.useRedhatSatellite');
+        } else {
+          App.showConfirmationPopup(
+            Em.K,
+            Em.I18n.t('installer.step1.advancedRepo.useRedhatSatellite.warning'),
+            () => this.toggleProperty('controller.selectedStack.useRedhatSatellite'),
+            Em.I18n.t('installer.step1.advancedRepo.useRedhatSatellite.message')
+          );
+        }
       }
     }
   }),
@@ -249,10 +292,7 @@ App.WizardStep1View = Em.View.extend({
     repository: null,
     placeholderBinding: "repository.placeholder",
     valueBinding: "repository.baseUrl",
-    disabled: function() {
-      var isRedhat = this.get('parentView').isRedhat(this.get('repository'));
-      return this.get('controller.selectedStack.useRedhatSatellite') && !isRedhat;
-    }.property('controller.selectedStack.useRedhatSatellite')
+    disabled: Em.computed.alias('controller.selectedStack.useRedhatSatellite')
   }),
 
   /**

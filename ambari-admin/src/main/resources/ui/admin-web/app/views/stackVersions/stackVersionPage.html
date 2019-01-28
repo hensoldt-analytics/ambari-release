@@ -121,13 +121,13 @@
   <div id="upload-definition-file-panel" ng-if="createController">
 
     <div class="col-sm-12 big-radio clearfix" ng-class="{'disabled' : networkLost || useRedhatSatellite}">
-      <input type="radio" ng-model="selectedOption.index" value="1" ng-change="togglePublicLocalOptionSelect()" ng-disabled="networkLost || useRedhatSatellite">
-      <span>{{'versions.usePublic' | translate}}</span>
+      <input type="radio" id="publicRepos" ng-model="selectedOption.index" value="1" ng-change="togglePublicLocalOptionSelect()" ng-disabled="networkLost || useRedhatSatellite">
+      <label for="publicRepos">{{'versions.usePublic' | translate}}</label>
       <a id="public-disabled-link" href="javascript:void(0);" ng-if="networkLost" ng-click="showPublicRepoDisabledDialog()">{{'versions.networkIssues.networkLost'| translate}}</a>
     </div>
     <div class="col-sm-12 big-radio clearfix">
-      <input type="radio" ng-model="selectedOption.index" value="2" ng-change="togglePublicLocalOptionSelect()">
-      {{'versions.useLocal' | translate}}
+      <input type="radio" id="localRepos" ng-model="selectedOption.index" value="2" ng-change="togglePublicLocalOptionSelect()">
+      <label for="localRepos">{{'versions.useLocal' | translate}}</label>
     </div>
   </div>
 
@@ -181,14 +181,26 @@
                 </div>
                 <div class="col-sm-9">
                   <div class="form-group repo-name-url {{repository.Repositories.repo_name}}"
-                       ng-class="{'has-error': repository.hasError }" ng-repeat="repository in os.repositories">
-                    <div ng-if="showRepo(repository)">
-                      <span class="repo-name-label control-label col-sm-3">{{repository.Repositories.repo_id}}</span>
+                       ng-class="{'has-error': repository.hasError }"
+                       ng-repeat="repository in os.repositories"
+                       ng-if="showRepo(repository)">
+                      <span class="repo-name-label control-label col-sm-3">
+                        <span ng-if="!repository.isEditing">{{repository.Repositories.repo_id}}</span>
+                        <i class="fa fa-pencil cursor-pointer"
+                           ng-click="repository.isEditing = true"
+                           ng-show="useRedhatSatellite && !repository.isEditing && isRedhat(repository)"></i>
+                        <input type="text" class="form-control"
+                               ng-show="useRedhatSatellite && repository.isEditing"
+                               ng-model="repository.Repositories.repo_id">
+                        <i class="fa fa-undo orange-icon cursor-pointer"
+                          ng-show="repository.isEditing && (repository.Repositories.repo_id !== repository.Repositories.initial_repo_id)"
+                          ng-click="repository.Repositories.repo_id = repository.Repositories.initial_repo_id"></i>
+                      </span>
                       <div class="col-sm-7 repo-url">
                         <input type="text" class="form-control"
                                placeholder="{{(repository.Repositories.repo_name.indexOf('UTILS') < 0 )?('versions.repository.placeholder' | translate) : ''}}"
                                ng-model="repository.Repositories.base_url"
-                               ng-change="onRepoUrlChange(repository)" ng-disabled="useRedhatSatellite && os.OperatingSystems.os_type.indexOf('redhat') === -1">
+                               ng-change="onRepoUrlChange(repository)" ng-disabled="useRedhatSatellite">
                       </div>
                       <i class="fa fa-undo orange-icon cursor-pointer"
                          ng-if="selectedOption.index == 1 && repository.Repositories.base_url != repository.Repositories.initial_base_url
@@ -197,7 +209,6 @@
                          ng-click="undoChange(repository)"
                          tooltip-html-unsafe="{{'common.undo' | translate}}"
                          aria-hidden="true"></i>
-                    </div>
                   </div>
                 </div>
                 <div class="col-sm-1 remove-icon" ng-click="removeOS()" ng-class="{'disabled' : useRedhatSatellite}"><i
@@ -214,19 +225,24 @@
                          ng-disabled="useRedhatSatellite">
                   <span ng-class="{'disabled' : useRedhatSatellite}">{{'versions.skipValidation' | translate}}</span>
                   <i class="fa fa-question-circle"
-                     tooltip-html-unsafe="{{'versions.alerts.skipValidationWarning' | translate}}" aria-hidden="true"></i>
+                     tooltip="{{'versions.alerts.skipValidationWarning' | translate}}"
+                     tooltip-placement="right"
+                     tooltip-trigger="mouseenter"
+                     aria-hidden="true"></i>
                 </label>
               </div>
             </div>
             <div class="col-sm-9" id="use-redhat">
               <div class="checkbox">
                 <label>
-                  <input type="checkbox" ng-model="useRedhatSatellite" ng-change="clearErrors()"
+                  <input type="checkbox" ng-model="useRedhatSatellite" ng-change="useRedHatCheckbox()"
                          ng-disabled="isPublicRepoSelected()">
                   <span ng-class="{'disabled' : isPublicRepoSelected()}"
                         tooltip="{{(isPublicRepoSelected())? ('versions.useRedhatSatellite.disabledMsg' | translate) : ''}}">{{'versions.useRedhatSatellite.title' | translate}}</span>
                   <i class="fa fa-question-circle"
-                     tooltip-html-unsafe="{{'versions.alerts.useRedhatSatelliteWarning' | translate}}"
+                     tooltip="{{'versions.alerts.useRedhatSatelliteWarning' | translate}}"
+                     tooltip-placement="right"
+                     tooltip-trigger="mouseenter"
                      aria-hidden="true"></i>
                 </label>
               </div>

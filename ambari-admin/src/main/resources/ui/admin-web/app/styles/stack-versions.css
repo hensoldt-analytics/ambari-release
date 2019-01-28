@@ -16,23 +16,53 @@
  * limitations under the License.
  */
 
-var App = require('app');
+#stack-versions .table .col-small {
+  width: 15%
+}
 
-App.Repository = DS.Model.extend({
-  id: DS.attr('string'),
-  baseUrl : DS.attr('string'),
-  defaultBaseUrl : DS.attr('string'),
-  latestBaseUrl : DS.attr('string'),
-  mirrorsList : DS.attr('array'),
-  osType : DS.attr('string'),
-  repoId : DS.attr('string'),
-  repoName : DS.attr('string'),
-  stackName : DS.attr('string'),
-  stackVersion : DS.attr('string'),
-  operatingSystem: DS.belongsTo('App.OS'),
-  tags: DS.attr('array')
-});
+#stack-versions .table .col-medium {
+  width: 30%
+}
 
-App.Repository.FIXTURES = [];
+#stack-versions .no-version-alert {
+  text-align: center;
+}
+#stack-versions table {
+  table-layout: fixed;
+}
+#stack-versions table .text-search-container {
+  font-weight: normal;
+  position: relative;
+}
+#stack-versions table .text-search-container .close {
+  position: absolute;
+  right: 15px;
+  top: 40px;
+}
 
+#stack-versions table td > * {
+  line-height: 24px;
+}
 
+.repo-table-title #name-label-adjust {
+  width: 20.7%;
+  padding-left:0px;
+  right:5px;
+}
+
+.repo-table-title #repo-base-url-label {
+  padding-left:0px;
+  right:3px;
+}
+
+.verison-label-row .label {
+  font-size: 100%;
+}
+
+.verison-label-row .btn {
+  padding: 10px;
+}
+
+.verison-label-row.button-padding {
+  padding: 4px;
+}
