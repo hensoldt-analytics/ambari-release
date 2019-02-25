@@ -53,7 +53,7 @@ public class AmbariAuthToLocalUserDetailsServiceTest extends EasyMockSupport {
     expect(configuration.getKerberosAuthenticationProperties()).andReturn(properties).once();
 
     User user = createMock(User.class);
-    expect(user.getUserName()).andReturn("user1").times(2);
+    expect(user.getUserName()).andReturn("user1").anyTimes();
     expect(user.getUserType()).andReturn(UserType.LDAP).once();
 
     Collection<AmbariGrantedAuthority> userAuthorities = Collections.singletonList(createNiceMock(AmbariGrantedAuthority.class));

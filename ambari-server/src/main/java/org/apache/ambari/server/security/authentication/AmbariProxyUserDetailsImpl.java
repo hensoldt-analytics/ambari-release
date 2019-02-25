@@ -15,15 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.ambari.server.security.authentication;
 
-import org.springframework.security.core.userdetails.UserDetails;
-
 /**
- * AmbariUserDetails implementations are extensions of {@link UserDetails} that contain information
- * about the authenticated user that is needed specifically by Ambari.  For example, the user's
- * <code>userId</code>.
+ * AmbariProxyUserDetailsImpl is a general implementation of a {@link AmbariProxyUserDetails}.
  */
-public interface AmbariUserDetails extends UserDetails {
-  Integer getUserId();
+public class AmbariProxyUserDetailsImpl implements AmbariProxyUserDetails {
+  private final String username;
+
+  /**
+   * Constructor
+   * @param username           the local username
+   */
+  public AmbariProxyUserDetailsImpl(String username) {
+    this.username = username;
+  }
+
+  @Override
+  public String getUsername() {
+    return username;
+  }
 }

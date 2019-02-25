@@ -15,15 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.ambari.server.security.authentication;
 
-import org.springframework.security.core.userdetails.UserDetails;
+package org.apache.ambari.server.security.authentication.kerberos;
+
+import org.apache.ambari.server.security.authentication.AmbariProxyUserDetailsImpl;
 
 /**
- * AmbariUserDetails implementations are extensions of {@link UserDetails} that contain information
- * about the authenticated user that is needed specifically by Ambari.  For example, the user's
- * <code>userId</code>.
+ * AmbariProxyUserKerberosDetailsImpl is a {@link AmbariProxyUserDetailsImpl} implementation that
+ * adds allows for the proxy user's principal name to be retrieved if the proxy user authenticated
+ * using Kerberos.
  */
-public interface AmbariUserDetails extends UserDetails {
-  Integer getUserId();
+public class AmbariProxyUserKerberosDetailsImpl extends AmbariProxyUserDetailsImpl {
+  private final String principalName;
+
+  public AmbariProxyUserKerberosDetailsImpl(String principalName, String localUsername) {
+    super(localUsername);
+    this.principalName = principalName;
+  }
+
+  public String getPrincipalName() {
+    return principalName;
+  }
 }
