@@ -452,7 +452,8 @@ class CustomServiceOrchestrator():
         'exitcode': 1,
       }
     finally:
-      self.conditionally_remove_command_file(json_path, ret)
+      if json_path:
+        self.conditionally_remove_command_file(json_path, ret)
 
     return ret
 
