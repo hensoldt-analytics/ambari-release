@@ -1450,7 +1450,7 @@ public class ViewRegistry {
   }
 
   // create masker from given class; probably replace with injector later
-  private static Masker getMasker(Class<? extends Masker> clazz) {
+  public static Masker getMasker(Class<? extends Masker> clazz) {
     try {
       return clazz.newInstance();
     } catch (Exception e) {
