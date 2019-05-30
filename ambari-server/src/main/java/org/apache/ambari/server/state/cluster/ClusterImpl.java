@@ -1959,9 +1959,7 @@ public class ClusterImpl implements Cluster {
       }
     }
 
-    for (ClusterConfigEntity clusterConfigEntity : clusterConfigs) {
-      clusterDAO.merge(clusterConfigEntity);
-    }
+    clusterDAO.merge(clusterConfigs);
 
     if (serviceName == null) {
       ArrayList<String> configTypes = new ArrayList<>();
@@ -2445,9 +2443,7 @@ public class ClusterImpl implements Cluster {
 
       // !!! without providing the flush here, when this transaction completes it
       // looks like the database has all unselected configs for some types
-      for (ClusterConfigEntity clusterConfig : configEntities) {
-        clusterDAO.merge(clusterConfig, true);
-      }
+      clusterDAO.merge(configEntities, true);
 
       cacheConfigurations();
 
@@ -2528,9 +2524,7 @@ public class ClusterImpl implements Cluster {
       // since the entities which were modified came from the cluster entity's
       // list to begin with, we can just save them right back - no need for a
       // new collection since the entity instances were modified directly
-      for (ClusterConfigEntity clusterConfig : configEntities) {
-        clusterDAO.merge(clusterConfig, true);
-      }
+      clusterDAO.merge(configEntities, true);
 
       cacheConfigurations();
 
