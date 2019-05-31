@@ -441,7 +441,7 @@ public class HostStackVersionResourceProvider extends AbstractControllerResource
             cluster.getClusterName(), INSTALL_PACKAGES_ACTION,
             Collections.singletonList(filter),
             roleParams);
-    actionContext.setTimeout(Short.valueOf(configuration.getDefaultAgentTaskTimeout(true)));
+    actionContext.setTimeout(Integer.valueOf(configuration.getDefaultAgentTaskTimeout(true)));
     actionContext.setRepositoryVersion(repoVersionEnt);
 
     repoVersionHelper.addCommandRepositoryToContext(actionContext, osEntity);
@@ -528,7 +528,7 @@ public class HostStackVersionResourceProvider extends AbstractControllerResource
       cluster.getClusterName(), STACK_SELECT_ACTION,
       Collections.singletonList(filter),
       Collections.<String, String>emptyMap());
-    actionContext.setTimeout(Short.valueOf(configuration.getDefaultAgentTaskTimeout(true)));
+    actionContext.setTimeout(Integer.valueOf(configuration.getDefaultAgentTaskTimeout(true)));
 
     try {
       actionExecutionHelper.get().addExecutionCommandsToStage(actionContext, stage, null, !forceInstallOnNonMemberHost);
