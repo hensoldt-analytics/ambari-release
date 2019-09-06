@@ -623,7 +623,6 @@
           "targets": [
             {
               "aggregator": "avg",
-              "aggregator": "avg",
               "alias": "Consumer Requests",
               "app": "kafka_broker",
               "downsampleAggregator": "avg",
