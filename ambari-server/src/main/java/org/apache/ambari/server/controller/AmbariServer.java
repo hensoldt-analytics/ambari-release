@@ -493,6 +493,7 @@ public class AmbariServer {
       //   /var/lib/ambari-server/resources/mpacks/beacon-engine.mpack-1.1.0.0/addon-services/BEACON/1.1.0
       // NOTE: Enabling aliases does not re-introduce the vulnerability described in CVE-2018-8003.
       resources.setInitParameter("aliases", "true");
+      resources.setInitParameter("dirAllowed", "false");
       root.addServlet(resources, "/resources/*");
       resources.setInitOrder(5);
 
