@@ -814,7 +814,7 @@ From source with checksum 150f554beae04f76f814f59549dead8b"""
     # ensure deregister is called
     self.assertResourceCalledIgnoreEarlier('Execute', 'hive --config /usr/hdp/current/hive-server2/conf/conf.server --service hiveserver2 --deregister 1.2.1.2.3.0.0-2434',
       path=['/bin:/usr/hdp/current/hive-server2/bin:mock_hadoop_dir'],
-      tries=1, user='hive')
+      tries=1, user='hive', not_if = format("! (ls /var/run/hive/hive-server.pid >/dev/null 2>&1 && ps -p 123 >/dev/null 2>&1)"))
 
     # ensure stop is called
     self.assertResourceCalled('Execute', "ambari-sudo.sh kill 123",
@@ -846,7 +846,7 @@ From source with checksum 150f554beae04f76f814f59549dead8b"""
     # ensure that deregister is called
     self.assertResourceCalledIgnoreEarlier( 'Execute', 'hive --config /usr/hdp/current/hive-server2/conf/conf.server --service hiveserver2 --deregister 1.2.1.2.3.0.0-2434',
       path=['/bin:/usr/hdp/current/hive-server2/bin:mock_hadoop_dir'],
-      tries=1, user='hive')
+      tries=1, user='hive', not_if = format("! (ls /var/run/hive/hive-server.pid >/dev/null 2>&1 && ps -p 123 >/dev/null 2>&1)"))
 
     # ensure hdp-select is called
     self.assertResourceCalledIgnoreEarlier('Execute',
