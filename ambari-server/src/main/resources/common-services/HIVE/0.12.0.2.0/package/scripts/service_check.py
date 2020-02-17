@@ -69,10 +69,11 @@ class HiveServiceCheckDefault(HiveServiceCheck):
       kinit_cmd = ""
 
     # Check HiveServer
-    Logger.info("Running Hive Server checks")
-    Logger.info("--------------------------\n")
-    self.check_hive_server(env, 'Hive Server', kinit_cmd, params.hive_server_hosts,
-                           int(format("{hive_server_port}")), params.hive_ssl_keystore_path, params.hive_ssl_keystore_password)
+    if not params.has_hive_interactive  or not params.hive_interactive_enabled or params.hive_server_hosts:
+      Logger.info("Running Hive Server checks")
+      Logger.info("--------------------------\n")
+      self.check_hive_server(env, 'Hive Server', kinit_cmd, params.hive_server_hosts,
+                             int(format("{hive_server_port}")), params.hive_ssl_keystore_path, params.hive_ssl_keystore_password)
 
 
     if params.has_hive_interactive  and params.hive_interactive_enabled:
