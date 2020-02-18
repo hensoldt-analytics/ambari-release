@@ -197,9 +197,9 @@ class HiveServerInteractiveDefault(HiveServerInteractive):
         """
         Logger.info("HSI HA is enabled. Checking if LLAP is already running ...")
         if params.stack_supports_hive_interactive_ga:
-          status = self.check_llap_app_status_in_llap_ga(params.llap_app_name, 2, params.hive_server_interactive_ha)
+          status = self.check_llap_app_status_in_llap_ga(params.llap_app_name, 2, params.hive_server_interactive_ha, params.percent_desired_instances_to_be_up)
         else:
-          status = self.check_llap_app_status_in_llap_tp(params.llap_app_name, 2, params.hive_server_interactive_ha)
+          status = self.check_llap_app_status_in_llap_tp(params.llap_app_name, 2, params.hive_server_interactive_ha, params.percent_desired_instances_to_be_up)
 
         if status:
           Logger.info("LLAP app '{0}' is already running.".format(params.llap_app_name))
@@ -292,9 +292,9 @@ class HiveServerInteractiveDefault(HiveServerInteractive):
         # We need to check the status of LLAP app to figure out it got
         # launched properly and is in running state. Then go ahead with Hive Interactive Server start.
         if params.stack_supports_hive_interactive_ga:
-          status = self.check_llap_app_status_in_llap_ga(params.llap_app_name, params.num_retries_for_checking_llap_status)
+          status = self.check_llap_app_status_in_llap_ga(params.llap_app_name, params.num_retries_for_checking_llap_status, False, params.percent_desired_instances_to_be_up)
         else:
-          status = self.check_llap_app_status_in_llap_tp(params.llap_app_name, params.num_retries_for_checking_llap_status)
+          status = self.check_llap_app_status_in_llap_tp(params.llap_app_name, params.num_retries_for_checking_llap_status, False, params.percent_desired_instances_to_be_up)
         if status:
           Logger.info("LLAP app '{0}' deployed successfully.".format(params.llap_app_name))
           return True
@@ -514,7 +514,7 @@ class HiveServerInteractiveDefault(HiveServerInteractive):
     Parameters: llap_app_name : deployed llap app name.
                 num_retries :   Number of retries to check the LLAP app status.
     """
-    def check_llap_app_status_in_llap_tp(self, llap_app_name, num_retries, return_immediately_if_stopped=False):
+    def check_llap_app_status_in_llap_tp(self, llap_app_name, num_retries, return_immediately_if_stopped=False, percent_desired_instances_to_be_up=80):
       curr_time = time.time()
       num_retries = int(num_retries)
       if num_retries <= 0:
@@ -527,7 +527,7 @@ class HiveServerInteractiveDefault(HiveServerInteractive):
       @retry(times=num_retries, sleep_time=2, err_class=Fail)
       def do_retries():
         llap_app_info = self._get_llap_app_status_info_in_llap_tp(llap_app_name)
-        return self._verify_llap_app_status(llap_app_info, llap_app_name, return_immediately_if_stopped, curr_time)
+        return self._verify_llap_app_status(llap_app_info, llap_app_name, return_immediately_if_stopped, curr_time, percent_desired_instances_to_be_up)
 
       try:
         status = do_retries()
@@ -538,16 +538,15 @@ class HiveServerInteractiveDefault(HiveServerInteractive):
         traceback.print_exc()
         return False
 
-    def check_llap_app_status_in_llap_ga(self, llap_app_name, num_retries, return_immediately_if_stopped=False):
+    def check_llap_app_status_in_llap_ga(self, llap_app_name, num_retries, return_immediately_if_stopped=False, percent_desired_instances_to_be_up=80):
       curr_time = time.time()
       total_timeout = int(num_retries) * 20; # Total wait time while checking the status via llapstatus command
       Logger.debug("Calculated 'total_timeout' : {0} using config 'num_retries_for_checking_llap_status' : {1}".format(total_timeout, num_retries))
       refresh_rate = 2 # Frequency of checking the llapstatus
-      percent_desired_instances_to_be_up = 80 # Out of 100.
       llap_app_info = self._get_llap_app_status_info_in_llap_ga(percent_desired_instances_to_be_up/100.0, total_timeout, refresh_rate)
 
       try:
-        return self._verify_llap_app_status(llap_app_info, llap_app_name, return_immediately_if_stopped, curr_time)
+        return self._verify_llap_app_status(llap_app_info, llap_app_name, return_immediately_if_stopped, curr_time, percent_desired_instances_to_be_up)
       except Exception as e:
         Logger.info(e.message)
         return False
@@ -560,7 +559,7 @@ class HiveServerInteractiveDefault(HiveServerInteractive):
       import params
       return params.hive_user
 
-    def _verify_llap_app_status(self, llap_app_info, llap_app_name, return_immediately_if_stopped, curr_time):
+    def _verify_llap_app_status(self, llap_app_info, llap_app_name, return_immediately_if_stopped, curr_time, percent_desired_instances_to_be_up=80):
       if llap_app_info is None or 'state' not in llap_app_info:
         Logger.error("Malformed JSON data received for LLAP app. Exiting ....")
         return False
@@ -568,7 +567,6 @@ class HiveServerInteractiveDefault(HiveServerInteractive):
       # counters based on various states.
       live_instances = 0
       desired_instances = 0
-      percent_desired_instances_to_be_up = 80 # Used in 'RUNNING_PARTIAL' state.
       if return_immediately_if_stopped and (llap_app_info['state'].upper() in ('APP_NOT_FOUND', 'COMPLETE')):
         return False
       if llap_app_info['state'].upper() == 'RUNNING_ALL':

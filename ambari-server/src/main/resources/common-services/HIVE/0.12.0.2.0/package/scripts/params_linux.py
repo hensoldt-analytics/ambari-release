@@ -872,3 +872,5 @@ manage_hive_fsroot = default('/configurations/cluster-env/manage_hive_fsroot', T
 # replication directories
 hive_repl_cmrootdir = default('/configurations/hive-site/hive.repl.cmrootdir', None)
 hive_repl_rootdir = default('/configurations/hive-site/hive.repl.rootdir', None)
+
+percent_desired_instances_to_be_up = int(default('/configurations/hive-interactive-env/percent_desired_instances_to_be_up', 80))

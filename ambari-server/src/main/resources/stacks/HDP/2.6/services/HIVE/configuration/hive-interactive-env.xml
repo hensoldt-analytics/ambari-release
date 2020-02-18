@@ -93,6 +93,17 @@
     <on-ambari-upgrade add="true"/>
   </property>
 
+  <property>
+    <name>percent_desired_instances_to_be_up</name>
+    <value>80</value>
+    <display-name>The percent of desired running nodes</display-name>
+    <description>When checking LLAP app status and the app is in 'APP_NOT_FOUND', 'RUNNING_PARTIAL' or 'LAUNCHING' state, waits until the specified percent of nodes to run.</description>
+    <value-attributes>
+      <type>int</type>
+    </value-attributes>
+    <on-ambari-upgrade add="false"/>
+  </property>
+
 
   <!-- hive-env.sh -->
   <property>
