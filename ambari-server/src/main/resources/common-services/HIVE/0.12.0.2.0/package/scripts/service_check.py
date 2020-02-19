@@ -95,9 +95,10 @@ class HiveServiceCheckDefault(HiveServiceCheck):
     Logger.info("-------------------\n")
     hcat_service_check()
 
-    Logger.info("Running WEBHCAT checks")
-    Logger.info("---------------------\n")
-    webhcat_service_check()
+    if not params.has_hive_interactive  or not params.hive_interactive_enabled or params.webhcat_server_host:
+      Logger.info("Running WEBHCAT checks")
+      Logger.info("---------------------\n")
+      webhcat_service_check()
 
   def check_hive_server(self, env, server_component_name, kinit_cmd, address_list, server_port, ssl_keystore, ssl_password):
     import params
