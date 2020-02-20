@@ -143,4 +143,18 @@
       <unique>false</unique>
     </repo>
   </os>
+  <os family="ubuntu18">
+    <repo>
+      <baseurl>http://s3.amazonaws.com/dev.hortonworks.com/HDP/ubuntu18/2.x/BUILDS/2.6.5.0-292</baseurl>
+      <repoid>HDP-2.6</repoid>
+      <reponame>HDP</reponame>
+      <unique>true</unique>
+    </repo>
+    <repo>
+      <baseurl>http://s3.amazonaws.com/dev.hortonworks.com/HDP-UTILS-1.1.0.21/repos/ubuntu18/</baseurl>
+      <repoid>HDP-UTILS-1.1.0.21</repoid>
+      <reponame>HDP-UTILS</reponame>
+      <unique>false</unique>
+    </repo>
+  </os>
 </reposinfo>

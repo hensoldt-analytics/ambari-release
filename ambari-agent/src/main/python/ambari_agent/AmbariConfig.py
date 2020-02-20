@@ -365,7 +365,7 @@ class AmbariConfig:
 
     :return: protocol name, PROTOCOL_TLSv1 by default
     """
-    return self.get('security', 'force_https_protocol', default="PROTOCOL_TLSv1")
+    return self.get('security', 'force_https_protocol', default="PROTOCOL_TLSv1_2")
 
   def get_force_https_protocol_value(self):
     """
