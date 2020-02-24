@@ -600,7 +600,7 @@ webhcat_pid_file = status_params.webhcat_pid_file
 templeton_jar = config['configurations']['webhcat-site']['templeton.jar']
 
 
-webhcat_server_host = config['clusterHostInfo']['webhcat_server_host']
+webhcat_server_host = default('/clusterHostInfo/webhcat_server_host', None)
 
 hcat_hdfs_user_dir = format("/user/{hcat_user}")
 hcat_hdfs_user_mode = 0755
