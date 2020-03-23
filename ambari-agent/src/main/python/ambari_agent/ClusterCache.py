@@ -139,6 +139,7 @@ class ClusterCache(dict):
     with self.__file_lock:
       with open(self.__current_cache_json_file, 'w') as f:
         json.dump(self, f, indent=2)
+        os.chmod(self.__current_cache_json_file, 0o600)
 
       if self.hash is not None:
         with open(self.__current_cache_hash_file, 'w') as fp:
