@@ -47,6 +47,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Resource to get the DDL information for the database
@@ -61,6 +63,8 @@ public class DDLService extends BaseService {
   protected final static Logger LOG =
     LoggerFactory.getLogger(DDLService.class);
 
+  protected final static Pattern DB_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_]+$");
+
   protected synchronized JobResourceManager getResourceManager() {
     if (resourceManager == null) {
       SharedObjectsFactory connectionsFactory = getSharedObjectsFactory();
@@ -74,6 +78,11 @@ public class DDLService extends BaseService {
     this.proxy = proxy;
   }
 
+  private void assertDBName(String dbName) throws ServiceFormattedException {
+    if(!DB_NAME_PATTERN.matcher(dbName).matches()) {
+      throw new ServiceFormattedException("Invalid database name - " + dbName);
+    }
+  }
 
   @GET
   @Path("databases")
@@ -89,6 +98,7 @@ public class DDLService extends BaseService {
   @Path("databases/{database_id}")
   @Produces(MediaType.APPLICATION_JSON)
   public Response getDatabase(@PathParam("database_id") String databaseId) {
+    assertDBName(databaseId);
     DatabaseResponse database = proxy.getDatabase(databaseId);
     JSONObject response = new JSONObject();
     response.put("database", database);
@@ -100,6 +110,7 @@ public class DDLService extends BaseService {
   @Produces(MediaType.APPLICATION_JSON)
   public Response deleteDatabase(@PathParam("database_id") String databaseId) {
     Job job = null;
+    assertDBName(databaseId);
     try {
       job = proxy.deleteDatabase(databaseId, getResourceManager());
       JSONObject response = new JSONObject();
@@ -117,6 +128,7 @@ public class DDLService extends BaseService {
   public Response createDatabase(CreateDatabaseRequestWrapper wrapper) {
     String databaseId = wrapper.database.name;
     Job job = null;
+    assertDBName(databaseId);
     try {
       job = proxy.createDatabase(databaseId, getResourceManager());
       JSONObject response = new JSONObject();
@@ -132,6 +144,7 @@ public class DDLService extends BaseService {
   @Path("databases/{database_id}/tables")
   @Produces(MediaType.APPLICATION_JSON)
   public Response getTables(@PathParam("database_id") String databaseName) {
+    assertDBName(databaseName);
     Set<TableResponse> tables = proxy.getTables(databaseName);
     JSONObject response = new JSONObject();
     response.put("tables", tables);
@@ -143,6 +156,7 @@ public class DDLService extends BaseService {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   public Response createTable(@PathParam("database_id") String databaseName, TableMetaRequest request) {
+    assertDBName(databaseName);
     try {
       Job job = proxy.createTable(databaseName, request.tableInfo, getResourceManager());
       JSONObject response = new JSONObject();
@@ -160,6 +174,7 @@ public class DDLService extends BaseService {
   @Consumes(MediaType.APPLICATION_JSON)
   public Response renameTable(@PathParam("database_id") String oldDatabaseName, @PathParam("table_id") String oldTableName,
                               TableRenameRequest request) {
+    assertDBName(oldDatabaseName);
     try {
       Job job = proxy.renameTable(oldDatabaseName, oldTableName, request.newDatabase, request.newTable, getResourceManager());
       JSONObject response = new JSONObject();
@@ -179,6 +194,7 @@ public class DDLService extends BaseService {
   public Response analyzeTable(@PathParam("database_id") String databaseName, @PathParam("table_id") String tableName,
                               @QueryParam("analyze_columns") String analyzeColumns) {
     Boolean shouldAnalyzeColumns = Boolean.FALSE;
+    assertDBName(databaseName);
     if(!Strings.isNullOrEmpty(analyzeColumns)){
       shouldAnalyzeColumns = Boolean.valueOf(analyzeColumns.trim());
     }
@@ -224,6 +240,7 @@ public class DDLService extends BaseService {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   public Response getTable(@PathParam("database_id") String databaseName, @PathParam("table_id") String tableName) {
+    assertDBName(databaseName);
     TableResponse table = proxy.getTable(databaseName, tableName);
     JSONObject response = new JSONObject();
     response.put("table", table);
@@ -242,6 +259,7 @@ public class DDLService extends BaseService {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   public Response alterTable(@PathParam("database_id") String databaseName, @PathParam("table_id") String oldTableName, TableMetaRequest tableMetaRequest) {
+    assertDBName(databaseName);
     try {
       ConnectionConfig hiveConnectionConfig = getHiveConnectionConfig();
       Job job = proxy.alterTable(context, hiveConnectionConfig, databaseName, oldTableName, tableMetaRequest.tableInfo, getResourceManager());
@@ -259,6 +277,7 @@ public class DDLService extends BaseService {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   public Response deleteTable(@PathParam("database_id") String databaseName, @PathParam("table_id") String tableName) {
+    assertDBName(databaseName);
     try {
       Job job = proxy.deleteTable(databaseName, tableName, getResourceManager());
       JSONObject response = new JSONObject();
@@ -274,6 +293,7 @@ public class DDLService extends BaseService {
   @Path("databases/{database_id}/tables/{table_id}/info")
   @Produces(MediaType.APPLICATION_JSON)
   public Response getTableInfo(@PathParam("database_id") String databaseName, @PathParam("table_id") String tableName) {
+    assertDBName(databaseName);
     ConnectionConfig hiveConnectionConfig = getHiveConnectionConfig();
     TableMeta meta = proxy.getTableProperties(context, hiveConnectionConfig, databaseName, tableName);
     JSONObject response = new JSONObject();
@@ -287,6 +307,7 @@ public class DDLService extends BaseService {
   @Consumes(MediaType.APPLICATION_JSON)
   public Response getColumnStats(@PathParam("database_id") String databaseName, @PathParam("table_id") String tableName,
                             @PathParam("column_id") String columnName) {
+    assertDBName(databaseName);
     try {
       Job job = proxy.getColumnStatsJob(databaseName, tableName, columnName, getResourceManager());
       JSONObject response = new JSONObject();
@@ -304,6 +325,7 @@ public class DDLService extends BaseService {
   @Consumes(MediaType.APPLICATION_JSON)
   public Response fetchColumnStats(@PathParam("database_id") String databaseName, @PathParam("table_id") String
     tablename, @PathParam("column_id") String columnName, @QueryParam("job_id") String jobId) {
+    assertDBName(databaseName);
     try {
       ColumnStats columnStats = proxy.fetchColumnStats(columnName, jobId, context);
       columnStats.setTableName(tablename);
