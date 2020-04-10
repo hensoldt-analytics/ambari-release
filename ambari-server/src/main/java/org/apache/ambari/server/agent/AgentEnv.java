@@ -279,14 +279,12 @@ public class AgentEnv {
    * Represents information about running java processes.
    */
   public static class JavaProc {
-    @SerializedName("user")        
+    @SerializedName("user")
     private String user;
-    @SerializedName("pid") 
+    @SerializedName("pid")
     private int pid = 0;
-    @SerializedName("hadoop") 
+    @SerializedName("hadoop")
     private boolean is_hadoop = false;
-    @SerializedName("command") 
-    private String command;
     
     public void setUser(String user) {
       this.user = user;
@@ -310,14 +308,6 @@ public class AgentEnv {
     
     public boolean isHadoop() {
       return is_hadoop;
-    }
-    
-    public void setCommand(String cmd) {
-      command = cmd;
-    }
-    
-    public String getCommand() {
-      return command;
     }
   }
   
