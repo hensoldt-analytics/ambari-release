@@ -50,7 +50,10 @@ App.MoveHiveComponentConfigInitializerClass = App.MoveComponentConfigInitializer
   _initAsHostsWithComponentsConsideringMovedComponent: function (configProperty, localDB, dependencies, initializer) {
     var allHosts = [];
     initializer.components.forEach(function(component) {
-      var hosts = localDB.masterComponentHosts.filterProperty('component', component).mapProperty('hostName');
+      //TODO: find out why 'HIVE_SERVER_INTERACTIVE' is not present in localDB.masterComponentHosts
+      var hosts = (component === 'HIVE_SERVER_INTERACTIVE'
+          ? App.HostComponent.find().filterProperty('componentName', component).mapProperty('hostName')
+          : localDB.masterComponentHosts.filterProperty('component', component).mapProperty('hostName'));
       if (component === initializer.movedComponent) {
         hosts = hosts.without(dependencies.sourceHostName);
         hosts.pushObject(dependencies.targetHostName);
