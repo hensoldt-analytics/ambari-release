@@ -32,6 +32,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -140,8 +141,9 @@ public class CreatePrincipalsServerAction extends KerberosServerAction {
           // This principal has not been processed before, process it.
           processPrincipal = true;
         } else if (!StringUtils.isEmpty(kerberosPrincipalEntity.getCachedKeytabPath())) {
-          // This principal has been processed and a keytab file has been cached for it... do not process it.
-          processPrincipal = false;
+          // This principal has been processed, process again only if there is no physical keytab file.
+          File file = new File(kerberosPrincipalEntity.getCachedKeytabPath());
+          processPrincipal = !file.exists();
         } else if (kerberosPrincipalHostDAO.exists(evaluatedPrincipal)) {
           // This principal has been processed and a keytab file has been distributed... do not process it.
           processPrincipal = false;
