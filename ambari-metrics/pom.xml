@@ -15,11 +15,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <groupId>org.apache.ambari</groupId>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ambari-metrics</artifactId>
-  <version>2.6.2.0.0</version>
+  <version>2.6.2.52.4</version>
   <packaging>pom</packaging>
   <modules>
     <module>../utility</module>
@@ -39,17 +39,17 @@
     <python.ver>python &gt;= 2.6</python.ver>
     <deb.python.ver>python (&gt;= 2.6)</deb.python.ver>
     <!--TODO change to HDP URL-->
-    <hbase.tar>http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos6/2.x/BUILDS/2.6.5.3012-38/tars/hbase-1.1.2.2.6.5.3012-38.tar.gz</hbase.tar>
+    <hbase.tar>http://s3.amazonaws.com/dev.hortonworks.com/HDP/ubuntu16/2.x/BUILDS/2.6.5.3012-38/tars/hbase/hbase-1.1.2.2.6.5.3012-38.tar.gz</hbase.tar>
     <hbase.folder>hbase-1.1.2.2.6.5.3012-38</hbase.folder>
-    <hadoop.tar>http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos6/2.x/BUILDS/2.6.5.3012-38/tars/hadoop/hadoop-2.7.3.2.6.5.3012-38.tar.gz</hadoop.tar>
+    <hadoop.tar>http://s3.amazonaws.com/dev.hortonworks.com/HDP/ubuntu16/2.x/BUILDS/2.6.5.3012-38/tars/hadoop/hadoop-2.7.3.2.6.5.3012-38.tar.gz</hadoop.tar>
     <hadoop.folder>hadoop-2.7.3.2.6.5.3012-38</hadoop.folder>
     <hbase.winpkg.zip>https://msibuilds.blob.core.windows.net/hdp/2.x/2.2.4.2/2/hbase-0.98.4.2.2.4.2-0002-hadoop2.winpkg.zip</hbase.winpkg.zip>
     <hbase.winpkg.folder>hbase-0.98.4.2.2.4.2-0002-hadoop2</hbase.winpkg.folder>
     <hadoop.winpkg.zip>https://msibuilds.blob.core.windows.net/hdp/2.x/2.2.4.2/2/hadoop-2.6.0.2.2.4.2-0002.winpkg.zip</hadoop.winpkg.zip>
     <hadoop.winpkg.folder>hadoop-2.6.0.2.2.4.2-0002</hadoop.winpkg.folder>
     <grafana.folder>grafana-2.6.0</grafana.folder>
-    <grafana.tar>https://grafanarel.s3.amazonaws.com/builds/grafana-2.6.0.linux-x64.tar.gz</grafana.tar>
-    <phoenix.tar>http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos6/2.x/BUILDS/2.6.5.3012-38/tars/phoenix/phoenix-4.7.0.2.6.5.3012-38.tar.gz</phoenix.tar>
+    <grafana.tar>http://s3.amazonaws.com/dev.hortonworks.com/ARTIFACTS/grafana-2.6.0.linux-x64.tar.gz</grafana.tar>
+    <phoenix.tar>http://s3.amazonaws.com/dev.hortonworks.com/HDP/ubuntu16/2.x/BUILDS/2.6.5.3012-38/tars/phoenix/phoenix-4.7.0.2.6.5.3012-38.tar.gz</phoenix.tar>
     <phoenix.folder>phoenix-4.7.0.2.6.5.3012-38</phoenix.folder>
     <resmonitor.install.dir>/usr/lib/python2.6/site-packages/resource_monitoring</resmonitor.install.dir>
     <powermock.version>1.6.2</powermock.version>
@@ -290,7 +290,7 @@
           <description>Maven Recipe: RPM Package.</description>
           <release>${package-release}</release>
           <version>${package-version}</version>
-          <mappings/>
+          <mappings />
         </configuration>
       </plugin>
       <plugin>

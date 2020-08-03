@@ -8,18 +8,17 @@
 	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
 	OF ANY KIND, either express or implied. See the License for the specific
 	language governing permissions and limitations under the License. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.ambari.contrib.views</groupId>
   <artifactId>slider</artifactId>
-  <version>2.6.2.0.0</version>
+  <version>2.6.2.52.4</version>
   <name>Slider</name>
 
   <parent>
     <groupId>org.apache.ambari.contrib.views</groupId>
     <artifactId>ambari-contrib-views</artifactId>
-    <version>2.6.2.0.0</version>
+    <version>2.6.2.52.4</version>
   </parent>
 
   <dependencies>
@@ -135,7 +134,7 @@
     <dependency>
       <groupId>org.apache.ambari.contrib.views</groupId>
       <artifactId>ambari-views-utils</artifactId>
-      <version>2.6.2.0.0</version>
+      <version>2.6.2.52.4</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.module</groupId>
@@ -154,7 +153,7 @@
     <commons-lang.version>2.6</commons-lang.version>
     <commons-compress.version>1.9</commons-compress.version>
     <httpclient.version>4.5.2</httpclient.version>
-    <slider.version>0.81.0-incubating-SNAPSHOT</slider.version>
+    <slider.version>0.92.0.2.6.5.3012-38</slider.version>
     <guice.version>3.0</guice.version>
     <jackson.version>1.9.13</jackson.version>
     <jersey.version>1.9</jersey.version>
@@ -406,7 +405,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore></ignore>
+                    <ignore />
                   </action>
                 </pluginExecution>
               </pluginExecutions>
@@ -453,12 +452,12 @@
         <dirsep>/</dirsep>
         <executable.python>${project.basedir}/../ambari-common/src/main/unix/ambari-python-wrap</executable.python>
         <executable.brunch>brunch</executable.brunch>
-        <args.brunch></args.brunch>
+        <args.brunch />
         <executable.gzip>gzip</executable.gzip>
         <executable.mkdir>mkdir</executable.mkdir>
-        <args.mkdir></args.mkdir>
+        <args.mkdir />
         <executable.npm>npm</executable.npm>
-        <args.npm></args.npm>
+        <args.npm />
         <executable.rmdir>rm</executable.rmdir>
         <args.rm.clean>-rf</args.rm.clean>
         <executable.shell>sh</executable.shell>

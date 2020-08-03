@@ -18,7 +18,7 @@
     <name>HIVE</name>
     <label>Hive</label>
     <version>1.5.0</version>
-    <build>${env.BUILD_NUMBER}</build>
+    <build>4</build>
 
     <min-ambari-version>2.0.*</min-ambari-version>
 
@@ -43,7 +43,7 @@
       <description>Semicolon-separated key value parameters to be used in JDBC URL generation to connect to hive server 2</description>
       <label>Hive Session Parameters</label>
       <placeholder>transportMode=http;httpPath=cliservice</placeholder>
-      <default-value></default-value>
+      <default-value />
       <required>false</required>
     </parameter>
 
