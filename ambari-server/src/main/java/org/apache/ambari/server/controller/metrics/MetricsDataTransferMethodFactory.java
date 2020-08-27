@@ -41,7 +41,9 @@ public class MetricsDataTransferMethodFactory {
     Set<String> metricsWithAggregateFunctionIds = new HashSet<String>();
     for (String metric : percentMetrics) {
       for (String aggregateFunctionId : AGGREGATE_FUNCTION_IDENTIFIERS) {
-        metricsWithAggregateFunctionIds.add(metric + aggregateFunctionId);
+        if (!"._sum".equals(aggregateFunctionId)) {
+          metricsWithAggregateFunctionIds.add(metric + aggregateFunctionId);
+        }
       }
     }
 
