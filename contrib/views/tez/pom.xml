@@ -14,23 +14,22 @@
    See the License for the specific language governing permissions and
    limitations under the License.
  -->
- <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.apache.ambari.contrib.views</groupId>
     <artifactId>ambari-contrib-views</artifactId>
-    <version>2.6.2.0.0</version>
+    <version>2.6.2.52.10</version>
   </parent>
   <properties>
     <ambari.dir>${project.parent.parent.parent.basedir}</ambari.dir>
-    <tez.view.version>0.7.0.0-SNAPSHOT</tez.view.version>
-    <tez.version>0.7.0</tez.version>
+    <tez.view.version>0.7.0.2.6.5.3012-38</tez.view.version>
+    <tez.version>0.7.0.2.6.5.3012-38</tez.version>
   </properties>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.ambari.contrib.views</groupId>
   <artifactId>tez-view</artifactId>
   <name>Tez</name>
-  <version>${tez.view.version}</version>
+  <version>2.6.2.52.10</version>
   <description>Tez View</description>
 
   <build>
@@ -276,7 +275,7 @@
     <dependency>
       <groupId>org.apache.ambari.contrib.views</groupId>
       <artifactId>ambari-views-utils</artifactId>
-      <version>2.6.2.0.0</version>
+      <version>2.6.2.52.10</version>
     </dependency>
 
   </dependencies>

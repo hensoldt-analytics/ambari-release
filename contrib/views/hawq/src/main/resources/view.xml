@@ -18,7 +18,7 @@
     <name>HAWQ</name>
     <label>HAWQ</label>
     <version>1.0.0</version>
-    <build>${env.BUILD_NUMBER}</build>
+    <build>10</build>
 
     <parameter>
         <name>hawq.user.name</name>
