@@ -16,9 +16,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <name>Ambari</name>
     <description>
       Ambari is a web-based tool for performing installation, management, and monitoring of Apache Hadoop clusters. The stack of components that are currently supported by
@@ -42,7 +40,7 @@
         <package.pid.dir>/var/run/ambari</package.pid.dir>
         <package.release>1</package.release>
         <package.type>tar.gz</package.type>
-        <ambari.version>2.7.1.0.0</ambari.version>
+        <ambari.version>2.7.3.35.3</ambari.version>
         <final.name>${project.artifactId}-${ambari.version}</final.name>
     </properties>
 
@@ -189,7 +187,7 @@
             <id>amruta</id>
             <name>Amruta R Borkar</name>
             <email>amruta@apache.org</email>
-            <timezone></timezone>
+            <timezone />
             <roles>
                 <role>Committer</role>
             </roles>
@@ -213,7 +211,7 @@
             <id>anitajebaraj</id>
             <name>Anita Jebaraj</name>
             <email>anitajebaraj@apache.org</email>
-            <timezone></timezone>
+            <timezone />
             <roles>
                 <role>Committer</role>
             </roles>
@@ -306,7 +304,7 @@
             <id>bhuvnesh2703</id>
             <name>Bhuvnesh Chaudhary</name>
             <email>bhuvnesh2703@apache.org</email>
-            <timezone></timezone>
+            <timezone />
             <roles>
                 <role>Committer</role>
             </roles>
@@ -341,7 +339,7 @@
             <id>croberts</id>
             <name>Chad Roberts</name>
             <email>croberts@apache.org</email>
-            <timezone></timezone>
+            <timezone />
             <roles>
                 <role>PMC</role>
             </roles>
@@ -734,7 +732,7 @@
             <id>magyari_sandor</id>
             <name>Sandor Magyari</name>
             <email>magyari_sandor@apache.org</email>
-            <timezone></timezone>
+            <timezone />
             <roles>
                 <role>Committer</role>
             </roles>
@@ -746,7 +744,7 @@
             <id>mgergely</id>
             <name>Miklos Gergely</name>
             <email>mgergely@apache.org</email>
-            <timezone></timezone>
+            <timezone />
             <roles>
                 <role>Committer</role>
             </roles>
@@ -758,7 +756,7 @@
             <id>mithmatt</id>
             <name>Mithun Mathew</name>
             <email>mithmatt@apache.org</email>
-            <timezone></timezone>
+            <timezone />
             <roles>
                 <role>Committer</role>
             </roles>
@@ -890,7 +888,7 @@
             <id>ppriya</id>
             <name>Padma Priya</name>
             <email>ppriya@apache.org</email>
-            <timezone></timezone>
+            <timezone />
             <roles>
                 <role>Committer</role>
             </roles>
@@ -902,7 +900,7 @@
             <id>prabhjyotsingh</id>
             <name>Prabhjyot Singh</name>
             <email>prabhjyotsingh@apache.org</email>
-            <timezone></timezone>
+            <timezone />
             <roles>
                 <role>Committer</role>
             </roles>
@@ -926,7 +924,7 @@
             <id>qin</id>
             <name>Qin Liu</name>
             <email>qin@apache.org</email>
-            <timezone></timezone>
+            <timezone />
             <roles>
                 <role>Committer</role>
             </roles>
@@ -1046,7 +1044,7 @@
             <id>smolnar</id>
             <name>Sandor Molnar</name>
             <email>smolnar@apache.org</email>
-            <timezone></timezone>
+            <timezone />
             <roles>
                 <role>Committer</role>
             </roles>
@@ -1082,7 +1080,7 @@
             <id>stoader</id>
             <name>Sebastian Toader</name>
             <email>stoader@apache.org</email>
-            <timezone></timezone>
+            <timezone />
             <roles>
                 <role>Committer</role>
             </roles>
@@ -1175,7 +1173,7 @@
             <id>tobiasistvan</id>
             <name>Istvan Tobias</name>
             <email>tobiasistvan@apache.org</email>
-            <timezone></timezone>
+            <timezone />
             <roles>
                 <role>Committer</role>
             </roles>
@@ -1246,7 +1244,7 @@
             <id>vishalsuvagia</id>
             <name>Vishal Suvagia</name>
             <email>vishalsuvagia@apache.org</email>
-            <timezone></timezone>
+            <timezone />
             <roles>
                 <role>Committer</role>
             </roles>
@@ -1321,7 +1319,7 @@
         </contributor>
         <contributor>
           <name>Sandeep Baldawa</name>
-          <organization></organization>
+          <organization />
         </contributor>
         <contributor>
           <name>Daniel Ballard</name>
@@ -1333,7 +1331,7 @@
         </contributor>
         <contributor>
           <name>Nadav Caspi</name>
-          <organization></organization>
+          <organization />
         </contributor>
         <contributor>
           <name>Chelsea Chang</name>
@@ -1341,7 +1339,7 @@
         </contributor>
         <contributor>
           <name>Chun Chen</name>
-          <organization></organization>
+          <organization />
         </contributor>
         <contributor>
           <name>Bradley Childs</name>
@@ -1353,7 +1351,7 @@
         </contributor>
         <contributor>
           <name>Ellen Evans</name>
-          <organization></organization>
+          <organization />
         </contributor>
         <contributor>
           <name>Matthew Farrellee</name>
@@ -1361,7 +1359,7 @@
         </contributor>
         <contributor>
           <name>Ahmed Fathalla</name>
-          <organization></organization>
+          <organization />
         </contributor>
         <contributor>
           <name>Andrew Grande</name>
@@ -1369,7 +1367,7 @@
         </contributor>
         <contributor>
           <name>Ximo Guanter</name>
-          <organization></organization>
+          <organization />
         </contributor>
         <contributor>
           <name>Arpit Gupta</name>
@@ -1397,7 +1395,7 @@
         </contributor>
         <contributor>
           <name>Saurabh Jain</name>
-          <organization></organization>
+          <organization />
         </contributor>
         <contributor>
           <name>Ritesh Jaltare</name>
@@ -1405,7 +1403,7 @@
         </contributor>
         <contributor>
           <name>Shawn Kern</name>
-          <organization></organization>
+          <organization />
         </contributor>
         <contributor>
           <name>Giridharan Kesavan</name>
@@ -1413,11 +1411,11 @@
         </contributor>
         <contributor>
           <name>Olivier Lamy</name>
-          <organization></organization>
+          <organization />
         </contributor>
         <contributor>
           <name>Brandon Li</name>
-          <organization></organization>
+          <organization />
         </contributor>
         <contributor>
           <name>Chuan Liu</name>
@@ -1425,7 +1423,7 @@
         </contributor>
         <contributor>
           <name>Adamos Loizou</name>
-          <organization></organization>
+          <organization />
         </contributor>
         <contributor>
           <name>Jeff Markham</name>
@@ -1441,7 +1439,7 @@
         </contributor>
         <contributor>
           <name>David McWhorter</name>
-          <organization></organization>
+          <organization />
         </contributor>
         <contributor>
           <name>Rodrigo Meneses</name>
@@ -1457,7 +1455,7 @@
         </contributor>
         <contributor>
           <name>Shantanu Mundkur</name>
-          <organization></organization>
+          <organization />
         </contributor>
         <contributor>
           <name>Thejas Nair</name>
@@ -1469,7 +1467,7 @@
         </contributor>
         <contributor>
           <name>Richard Pelavin</name>
-          <organization></organization>
+          <organization />
         </contributor>
         <contributor>
           <name>Anthony Penniston</name>
@@ -1485,7 +1483,7 @@
         </contributor>
         <contributor>
           <name>ViVek Raghuwanshi</name>
-          <organization></organization>
+          <organization />
         </contributor>
         <contributor>
           <name>Steve Ratay</name>
@@ -1493,11 +1491,11 @@
         </contributor>
         <contributor>
           <name>Luciano Resende</name>
-          <organization></organization>
+          <organization />
         </contributor>
         <contributor>
           <name>Ananya Sen</name>
-          <organization></organization>
+          <organization />
         </contributor>
         <contributor>
           <name>Ashish Singh</name>
@@ -1545,7 +1543,7 @@
         </contributor>
         <contributor>
           <name>Adam Westerman</name>
-          <organization></organization>
+          <organization />
         </contributor>
         <contributor>
           <name>Eron Wright</name>
@@ -1569,11 +1567,11 @@
         </contributor>
         <contributor>
           <name>Dharmesh Makwana</name>
-          <organization></organization>
+          <organization />
         </contributor>
         <contributor>
           <name>Hayat Behlim</name>
-          <organization></organization>
+          <organization />
         </contributor>
       </contributors>
 
