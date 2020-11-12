@@ -3641,6 +3641,12 @@ public class AmbariManagementControllerImpl implements AmbariManagementControlle
         }
         safeToRemoveSCHs.get(component).add(componentHost);
       } catch (Exception ex) {
+        LOG.warn("Not removing hostComponent, since it's not safe to remove"
+                   + ", clusterName=" + request.getClusterName()
+                   + ", serviceName=" + request.getServiceName()
+                   + ", componentName=" + request.getComponentName()
+                   + ", hostname=" + request.getHostname()
+                   + ", request=" + request, ex);
         deleteMetaData.addException(request.getHostname() + "/" + request.getComponentName(), ex);
       }
     }
@@ -3680,6 +3686,12 @@ public class AmbariManagementControllerImpl implements AmbariManagementControlle
             }
           }
         } catch (Exception ex) {
+          LOG.warn("Cannot delete hostComponent"
+                     + ", clusterName=" + componentHost.getClusterName()
+                     + ", serviceName=" + componentHost.getServiceName()
+                     + ", componentName=" + componentHost.getServiceComponentName()
+                     + ", hostname=" + componentHost.getHostName()
+                     + ", request=" + componentHost, ex);
           deleteMetaData.addException(componentHost.getHostName() + "/" + componentHost.getServiceComponentName(), ex);
         }
       }

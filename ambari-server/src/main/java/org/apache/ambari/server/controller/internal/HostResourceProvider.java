@@ -1038,6 +1038,8 @@ public class HostResourceProvider extends AbstractControllerResourceProvider {
         try {
           componentDeleteStatus = getManagementController().deleteHostComponents(schrs);
         } catch (Exception ex) {
+          LOG.warn("Cannot delete service host components from the host {} in cluster {}",
+                   hostname, hostRequest.getClusterName(), ex);
           deleteStatusMetaData.addException(hostname, ex);
         }
       }
@@ -1066,6 +1068,7 @@ public class HostResourceProvider extends AbstractControllerResourceProvider {
         }
         deleteStatusMetaData.addDeletedKey(hostname);
       } catch (Exception ex) {
+        LOG.warn("Cannot form topology updates map", ex);
         deleteStatusMetaData.addException(hostname, ex);
       }
       removeHostFromClusterTopology(clusters, hostRequest);
