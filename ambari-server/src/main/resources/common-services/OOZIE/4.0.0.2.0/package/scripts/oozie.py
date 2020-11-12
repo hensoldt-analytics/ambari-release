@@ -331,9 +331,16 @@ def oozie_server_specific(upgrade_type):
                                                          params.oozie_user,
                                                          params.user_group
                                                          )
+
+      exclude_list_for_hive2_client = ['javax.jdo.option.ConnectionPassword']
+      hive_site_config_copy = hive_site_config.copy()
+      for item in exclude_list_for_hive2_client:
+        if item in hive_site_config_copy.keys():
+          del hive_site_config_copy[item]
+
       XmlConfig("hive-site.xml",
         conf_dir=params.hive_conf_dir,
-        configurations=hive_site_config,
+        configurations=hive_site_config_copy,
         configuration_attributes=params.config['configuration_attributes']['hive-site'],
         owner=params.oozie_user,
         group=params.user_group,
