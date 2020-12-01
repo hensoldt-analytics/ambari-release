@@ -705,6 +705,11 @@ public class RequestResourceProvider extends AbstractControllerResourceProvider 
         if (null != clusterId) {
           // !!! don't mix results of cluster vs non-cluster
           requestIds = s_requestDAO.findAllRequestIds(maxResults, ascOrder, clusterId);
+          Collection<? extends org.apache.ambari.server.actionmanager.Request> topologyRequests =
+            topologyManager.getRequests(Collections.emptyList());
+          for (org.apache.ambari.server.actionmanager.Request request : topologyRequests) {
+            requestIds.add(request.getRequestId());
+          }
         } else {
           // !!! not a cluster, so get all requests NOT affiliated with a cluster
           requestIds = s_requestDAO.findAllRequestIds(maxResults, ascOrder, null);
@@ -717,6 +722,13 @@ public class RequestResourceProvider extends AbstractControllerResourceProvider 
           maxResults != null ? maxResults : BaseRequest.DEFAULT_PAGE_SIZE,
                 ascOrder != null ? ascOrder : false);
       }
+      //sort Ids and sublist the required number
+      if (ascOrder) {
+        Collections.sort(requestIds);
+      } else {
+        requestIds.sort(Collections.reverseOrder());
+      }
+      requestIds = requestIds.subList(0, Math.min(maxResults, requestIds.size()));
 
       LOG.debug("List<Long> requestIds = actionManager.getRequestsByStatus = {}", requestIds.size());
 
