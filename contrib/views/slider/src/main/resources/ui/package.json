@@ -20,6 +20,7 @@
     "update:skeleton": "node setup.js update:skeleton"
   },
   "dependencies": {
+    "brunch": "1.7.20",
     "clean-css-brunch": ">= 1.0 < 1.8",
     "coffee-script-brunch": ">= 1.0 < 1.8",
     "css-brunch": ">= 1.0 < 1.8",

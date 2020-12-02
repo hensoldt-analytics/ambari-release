@@ -216,7 +216,7 @@
               <goal>exec</goal>
             </goals>
             <configuration>
-              <executable>${executable.brunch}</executable>
+              <executable>${ui.directory}/node_modules/brunch/bin/${executable.brunch}</executable>
               <workingDirectory>${ui.directory}</workingDirectory>
               <commandlineArgs>${args.brunch} build</commandlineArgs>
             </configuration>
