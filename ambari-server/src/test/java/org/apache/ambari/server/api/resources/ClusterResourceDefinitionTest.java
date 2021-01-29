@@ -55,7 +55,6 @@ public class ClusterResourceDefinitionTest {
     assertTrue(includesType(subResources, Resource.Type.Host));
     assertTrue(includesType(subResources, Resource.Type.Configuration));
     assertTrue(includesType(subResources, Resource.Type.Request));
-    assertTrue(includesType(subResources, Resource.Type.Workflow));
     assertTrue(includesType(subResources, Resource.Type.ConfigGroup));
     assertTrue(includesType(subResources, Resource.Type.AlertDefinition));
     assertTrue(includesType(subResources, Resource.Type.ServiceConfigVersion));

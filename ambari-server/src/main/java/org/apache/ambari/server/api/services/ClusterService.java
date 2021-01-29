@@ -577,19 +577,6 @@ public class ClusterService extends BaseService {
   }
 
   /**
-   * Gets the workflows sub-resource.
-   *
-   * @param request      the request
-   * @param clusterName  the cluster name
-   *
-   * @return  the workflow service
-   */
-  @Path("{clusterName}/workflows")
-  public WorkflowService getWorkflowHandler(@Context javax.ws.rs.core.Request request, @PathParam("clusterName") String clusterName) {
-    return new WorkflowService(clusterName);
-  }
-
-  /**
    * Gets the config group service
    *
    * @param request      the request

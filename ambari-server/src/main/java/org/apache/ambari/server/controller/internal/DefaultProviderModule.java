@@ -48,12 +48,6 @@ public class DefaultProviderModule extends AbstractProviderModule {
     LOGGER.debug("Creating resource provider for the type: {}", type);
 
     switch (type.getInternalType()) {
-      case Workflow:
-        return new WorkflowResourceProvider();
-      case Job:
-        return new JobResourceProvider();
-      case TaskAttempt:
-        return new TaskAttemptResourceProvider();
       case View:
         return new ViewResourceProvider();
       case ViewVersion:

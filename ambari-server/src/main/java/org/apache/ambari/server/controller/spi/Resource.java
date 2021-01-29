@@ -105,9 +105,6 @@ public interface Resource {
     DRFeed,
     DRTargetCluster,
     DRInstance,
-    Workflow,
-    Job,
-    TaskAttempt,
     RootService,
     RootServiceComponent,
     RootServiceComponentConfiguration,
@@ -228,9 +225,6 @@ public interface Resource {
     public static final Type DRFeed = InternalType.DRFeed.getType();
     public static final Type DRTargetCluster = InternalType.DRTargetCluster.getType();
     public static final Type DRInstance = InternalType.DRInstance.getType();
-    public static final Type Workflow = InternalType.Workflow.getType();
-    public static final Type Job = InternalType.Job.getType();
-    public static final Type TaskAttempt = InternalType.TaskAttempt.getType();
     public static final Type RootService = InternalType.RootService.getType();
     public static final Type RootServiceComponent = InternalType.RootServiceComponent.getType();
     public static final Type RootServiceComponentConfiguration = InternalType.RootServiceComponentConfiguration.getType();

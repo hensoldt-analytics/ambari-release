@@ -222,18 +222,6 @@ public class ResourceInstanceFactoryImpl implements ResourceInstanceFactory {
         resourceDefinition = new InstanceResourceDefinition();
         break;
 
-      case Workflow:
-        resourceDefinition = new WorkflowResourceDefinition();
-        break;
-
-      case Job:
-        resourceDefinition = new JobResourceDefinition();
-        break;
-
-      case TaskAttempt:
-        resourceDefinition = new TaskAttemptResourceDefinition();
-        break;
-
       case RootService:
         resourceDefinition = new RootServiceResourceDefinition();
         break;
