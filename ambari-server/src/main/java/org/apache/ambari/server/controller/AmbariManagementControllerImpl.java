@@ -20,10 +20,6 @@ package org.apache.ambari.server.controller;
 
 import static org.apache.ambari.server.agent.ExecutionCommand.KeyNames.AGENT_STACK_RETRY_COUNT;
 import static org.apache.ambari.server.agent.ExecutionCommand.KeyNames.AGENT_STACK_RETRY_ON_UNAVAILABILITY;
-import static org.apache.ambari.server.agent.ExecutionCommand.KeyNames.AMBARI_DB_RCA_DRIVER;
-import static org.apache.ambari.server.agent.ExecutionCommand.KeyNames.AMBARI_DB_RCA_PASSWORD;
-import static org.apache.ambari.server.agent.ExecutionCommand.KeyNames.AMBARI_DB_RCA_URL;
-import static org.apache.ambari.server.agent.ExecutionCommand.KeyNames.AMBARI_DB_RCA_USERNAME;
 import static org.apache.ambari.server.agent.ExecutionCommand.KeyNames.CLIENTS_TO_UPDATE_CONFIGS;
 import static org.apache.ambari.server.agent.ExecutionCommand.KeyNames.CLUSTER_NAME;
 import static org.apache.ambari.server.agent.ExecutionCommand.KeyNames.COMMAND_RETRY_ENABLED;
@@ -5025,28 +5021,6 @@ public class AmbariManagementControllerImpl implements AmbariManagementControlle
   }
 
   @Override
-  public Map<String, String> getRcaParameters() {
-
-    String hostName = StageUtils.getHostName();
-
-    String url = configs.getRcaDatabaseUrl();
-    if (url.contains(Configuration.HOSTNAME_MACRO)) {
-      url =
-          url.replace(Configuration.HOSTNAME_MACRO,
-              hostsMap.getHostMap(hostName));
-    }
-
-    Map<String, String> rcaParameters = new HashMap<>();
-
-    rcaParameters.put(AMBARI_DB_RCA_URL, url);
-    rcaParameters.put(AMBARI_DB_RCA_DRIVER, configs.getRcaDatabaseDriver());
-    rcaParameters.put(AMBARI_DB_RCA_USERNAME, configs.getRcaDatabaseUser());
-    rcaParameters.put(AMBARI_DB_RCA_PASSWORD, configs.getRcaDatabasePassword());
-
-    return rcaParameters;
-  }
-
-  @Override
   public boolean checkLdapConfigured() {
     return ldapDataPopulator.isLdapEnabled();
   }
@@ -5900,7 +5874,6 @@ public class AmbariManagementControllerImpl implements AmbariManagementControlle
     clusterLevelParams.put(MYSQL_JDBC_URL, getMysqljdbcUrl());
     clusterLevelParams.put(ORACLE_JDBC_URL, getOjdbcUrl());
     clusterLevelParams.put(DB_DRIVER_FILENAME, configs.getMySQLJarName());
-    clusterLevelParams.putAll(getRcaParameters());
     clusterLevelParams.put(HOST_SYS_PREPPED, configs.areHostsSysPrepped());
     clusterLevelParams.put(AGENT_STACK_RETRY_ON_UNAVAILABILITY, configs.isAgentStackRetryOnInstallEnabled());
     clusterLevelParams.put(AGENT_STACK_RETRY_COUNT, configs.getAgentStackRetryOnInstallCount());

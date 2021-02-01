@@ -1270,7 +1270,6 @@ public class AmbariCustomCommandExecutionHelper {
     hostLevelParams.put(MYSQL_JDBC_URL, managementController.getMysqljdbcUrl());
     hostLevelParams.put(ORACLE_JDBC_URL, managementController.getOjdbcUrl());
     hostLevelParams.put(DB_DRIVER_FILENAME, configs.getMySQLJarName());
-    hostLevelParams.putAll(managementController.getRcaParameters());
     hostLevelParams.put(HOST_SYS_PREPPED, configs.areHostsSysPrepped());
     hostLevelParams.put(AGENT_STACK_RETRY_ON_UNAVAILABILITY, configs.isAgentStackRetryOnInstallEnabled());
     hostLevelParams.put(AGENT_STACK_RETRY_COUNT, configs.getAgentStackRetryOnInstallCount());

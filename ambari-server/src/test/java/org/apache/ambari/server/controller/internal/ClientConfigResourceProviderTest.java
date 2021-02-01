@@ -401,7 +401,6 @@ public class ClientConfigResourceProviderTest {
 
     HashMap<String, String> rcaParams = new HashMap<>();
     rcaParams.put("key", "value");
-    expect(managementController.getRcaParameters()).andReturn(rcaParams).anyTimes();
     expect(ambariMetaInfo.getService(stackName, stackVersion, serviceName)).andReturn(serviceInfo);
     expect(serviceInfo.getOsSpecifics()).andReturn(new HashMap<>()).anyTimes();
     Map<PropertyInfo, String> userProperties = new HashMap<>();
@@ -627,7 +626,6 @@ public class ClientConfigResourceProviderTest {
 
     HashMap<String, String> rcaParams = new HashMap<>();
     rcaParams.put("key", "value");
-    expect(managementController.getRcaParameters()).andReturn(rcaParams).anyTimes();
     expect(ambariMetaInfo.getService(stackName, stackVersion, serviceName)).andReturn(serviceInfo);
     expect(serviceInfo.getOsSpecifics()).andReturn(new HashMap<>()).anyTimes();
     PowerMock.expectNew(File.class, new Class<?>[]{String.class}, anyObject(String.class)).andReturn(mockFile).anyTimes();

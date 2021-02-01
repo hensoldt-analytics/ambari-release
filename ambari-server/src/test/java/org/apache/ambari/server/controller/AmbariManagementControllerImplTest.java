@@ -2143,11 +2143,8 @@ public class AmbariManagementControllerImplTest {
 
     AmbariManagementControllerImpl ambariManagementControllerImpl =
         createMockBuilder(AmbariManagementControllerImpl.class)
-            .addMockedMethod("getRcaParameters")
             .withConstructor(manager, clusters, injector).createNiceMock();
 
-    expect(ambariManagementControllerImpl.
-        getRcaParameters()).andReturn(new HashMap<>());
     replay(ambariManagementControllerImpl);
 
     // Inject configuration manually
