@@ -75,6 +75,7 @@ public class RequestImpl implements Request {
    * Is it a dry run request?
    */
   private final boolean dryRun;
+  private final boolean refreshCacheOnException;
 
   // ----- Constructors ------------------------------------------------------
 
@@ -120,6 +121,8 @@ public class RequestImpl implements Request {
     m_pageRequest = pageRequest;
 
     this.dryRun = this.requestInfoProperties.containsKey(DIRECTIVE_DRY_RUN) && Boolean.parseBoolean(this.requestInfoProperties.get(DIRECTIVE_DRY_RUN));
+    this.refreshCacheOnException = this.requestInfoProperties.containsKey(DIRECTIVE_REFRESH_CACHE_ON_EXCEPTION)
+        && Boolean.parseBoolean(this.requestInfoProperties.get(DIRECTIVE_REFRESH_CACHE_ON_EXCEPTION));
   }
 
   // ----- Request -----------------------------------------------------------
@@ -157,6 +160,10 @@ public class RequestImpl implements Request {
   @Override
   public boolean isDryRunRequest() {
     return dryRun;
+  }
+
+  public boolean isRefreshCacheOnException() {
+    return refreshCacheOnException;
   }
 
   @Override

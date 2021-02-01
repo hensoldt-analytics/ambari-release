@@ -41,6 +41,7 @@ import org.apache.ambari.server.security.authorization.AuthorizationException;
 import org.apache.ambari.server.security.authorization.AuthorizationHelper;
 import org.apache.ambari.server.security.authorization.ResourceType;
 import org.apache.ambari.server.security.authorization.RoleAuthorization;
+import org.apache.ambari.server.utils.RetryHelper;
 
 /**
  * Persistence Manager implementation.
@@ -135,6 +136,8 @@ public class PersistenceManagerImpl implements PersistenceManager {
   }
 
   protected Request createControllerRequest(RequestBody body) {
-    return PropertyHelper.getCreateRequest(body.getPropertySets(), body.getRequestInfoProperties());
+    Request request = PropertyHelper.getCreateRequest(body.getPropertySets(), body.getRequestInfoProperties());
+    RetryHelper.setRefreshCacheOnException(request.isRefreshCacheOnException());
+    return request;
   }
 }

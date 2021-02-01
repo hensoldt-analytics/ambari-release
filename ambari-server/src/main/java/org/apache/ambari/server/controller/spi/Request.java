@@ -32,6 +32,7 @@ public interface Request {
   String REQUEST_INFO_BODY_PROPERTY = "RAW_REQUEST_BODY";
 
   String DIRECTIVE_DRY_RUN = "dry_run";
+  String DIRECTIVE_REFRESH_CACHE_ON_EXCEPTION = "refresh_cache_on_exception";
 
   /**
    * Get the set of property ids being requested.  Used for requests to get
@@ -91,4 +92,6 @@ public interface Request {
    * @return true - if request is dry run request, false otherwise.
    */
   boolean isDryRunRequest();
+
+  boolean isRefreshCacheOnException();
 }

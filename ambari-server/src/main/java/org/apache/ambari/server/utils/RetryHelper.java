@@ -22,6 +22,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import javax.transaction.TransactionRolledbackException;
+
 import org.apache.ambari.server.AmbariException;
 import org.apache.ambari.server.state.Cluster;
 import org.apache.ambari.server.state.Clusters;
@@ -41,6 +43,17 @@ public class RetryHelper {
     @Override
     protected Set<Cluster> initialValue() {
       return new HashSet<>();
+    }
+  };
+
+  /**
+   * If true, cache is refreshed and retry is triggered
+   * also on TransactionRolledbackException and IllegalStateException.
+   */
+  private static ThreadLocal<Boolean> refreshCacheOnException = new ThreadLocal<Boolean>(){
+    @Override
+    protected Boolean initialValue() {
+      return false;
     }
   };
 
@@ -76,6 +89,12 @@ public class RetryHelper {
       if (ex instanceof DatabaseException) {
         return true;
       }
+
+      if (refreshCacheOnException.get() && (ex instanceof TransactionRolledbackException
+        || ex instanceof IllegalStateException)) {
+        return true;
+      }
+
       ex = ex.getCause();
 
     } while (ex != null);
@@ -115,5 +134,9 @@ public class RetryHelper {
       }
 
     } while (true);
+  }
+
+  public static void setRefreshCacheOnException(boolean refreshCacheOnException) {
+    RetryHelper.refreshCacheOnException.set(refreshCacheOnException);
   }
 }
